@@ -1,0 +1,19 @@
+<resources>
+
+    <style name="Theme.VinayakaCableNetwork" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="colorPrimary">#1E88E5</item>
+        <item name="colorPrimaryVariant">#1565C0</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <item name="colorSecondary">#43A047</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.VinayakaCableNetwork" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+</resources>

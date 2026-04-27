@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#F5F7FB">
+
+    <!-- TITLE -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Daily Report"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:gravity="center"
+        android:layout_marginBottom="10dp" />
+
+    <!-- ✅ NEW BUTTONS (ADDED ONLY) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp">
+
+        <Button
+            android:id="@+id/btnExcel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Excel"/>
+
+        <Button
+            android:id="@+id/btnPdf"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="PDF"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- TOTAL COLLECTION -->
+    <TextView
+        android:id="@+id/tvTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total: ₹0"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        android:layout_marginBottom="15dp" />
+
+    <!-- TOTAL PAYMENTS -->
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payments: 0"
+        android:textSize="16sp"
+        android:layout_marginBottom="10dp" />
+
+    <!-- CASH -->
+    <TextView
+        android:id="@+id/tvCash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cash: ₹0"
+        android:textSize="16sp"
+        android:textColor="#1976D2"
+        android:layout_marginBottom="10dp" />
+
+    <!-- UPI -->
+    <TextView
+        android:id="@+id/tvUPI"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="UPI: ₹0"
+        android:textSize="16sp"
+        android:textColor="#D32F2F" />
+
+    <!-- REPORT LIST -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerReport"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>
