@@ -1,6 +1,7 @@
 package com.saimega.vinayakacablenetwork
 
 import android.content.Context
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -10,6 +11,11 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context) {
         originalBaseContext = newBase
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applySavedTheme(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun getSystemService(name: String): Any? {

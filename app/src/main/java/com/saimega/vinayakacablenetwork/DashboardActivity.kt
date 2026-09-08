@@ -1,51 +1,46 @@
 package com.saimega.vinayakacablenetwork
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class DashboardActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
+
     private lateinit var tvPaidCount: TextView
     private lateinit var tvUnpaidCount: TextView
+    private lateinit var tvPartialCount: TextView
     private lateinit var tvTotalCount: TextView
     private lateinit var tvActiveCount: TextView
     private lateinit var tvOpenComplaints: TextView
     private lateinit var tvTodayAmount: TextView
     private lateinit var tvTotalOutstanding: TextView
-    
+    private lateinit var tvMonthBilling: TextView
+    private lateinit var tvMonthCollection: TextView
+    private lateinit var tvEmployeeToday: TextView
+    private lateinit var tvProgressPercent: TextView
+    private lateinit var progressFill: View
+    private lateinit var progressRemainder: View
+    private lateinit var adminFinSection: View
+    private lateinit var employeeFinSection: View
+    private lateinit var sixMonthBars: android.widget.LinearLayout
+    private lateinit var btnThemeToggle: TextView
+
     private var countListener: com.google.firebase.firestore.ListenerRegistration? = null
+    private var role: String = "ADMIN"
 
     private val currencyFormatter: NumberFormat by lazy {
         NumberFormat.getCurrencyInstance(Locale("en", "IN"))
@@ -56,84 +51,229 @@ class DashboardActivity : BaseActivity() {
         setContentView(R.layout.activity_dashboard)
 
         db = FirebaseFirestore.getInstance()
+        role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", "ADMIN") ?: "ADMIN"
 
         bindViews()
+        applyRoleVisibility()
         setupQuickActions()
-        setupListeners()
+        setupTopBar()
+        setupBottomNav()
+        renderSixMonthTrend()
+        applyStatusBarInset()
+    }
+
+    private fun applyStatusBarInset() {
+        val topBar = findViewById<View>(R.id.dashboardTopBar)
+        val basePaddingTop = topBar.paddingTop
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(topBar) { view, insets ->
+            val statusBarInset = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.statusBars())
+            view.setPadding(view.paddingLeft, statusBarInset.top + basePaddingTop, view.paddingRight, view.paddingBottom)
+            insets
+        }
     }
 
     private fun bindViews() {
         tvPaidCount = findViewById(R.id.tvPaidCount)
         tvUnpaidCount = findViewById(R.id.tvUnpaidCount)
+        tvPartialCount = findViewById(R.id.tvPartialCount)
         tvTotalCount = findViewById(R.id.tvTotalCount)
         tvActiveCount = findViewById(R.id.tvActiveCount)
         tvOpenComplaints = findViewById(R.id.tvOpenComplaints)
         tvTodayAmount = findViewById(R.id.tvTodayAmount)
         tvTotalOutstanding = findViewById(R.id.tvTotalOutstanding)
+        tvMonthBilling = findViewById(R.id.tvMonthBilling)
+        tvMonthCollection = findViewById(R.id.tvMonthCollection)
+        tvEmployeeToday = findViewById(R.id.tvEmployeeToday)
+        tvProgressPercent = findViewById(R.id.tvProgressPercent)
+        progressFill = findViewById(R.id.progressFill)
+        progressRemainder = findViewById(R.id.progressRemainder)
+        adminFinSection = findViewById(R.id.adminFinSection)
+        employeeFinSection = findViewById(R.id.employeeFinSection)
+        sixMonthBars = findViewById(R.id.sixMonthBars)
+        btnThemeToggle = findViewById(R.id.btnThemeToggle)
 
         val username = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("username", "Admin") ?: "Admin"
-        findViewById<TextView>(R.id.tvUsername).text = "Welcome, $username 👋"
         findViewById<TextView>(R.id.tvProfileInitial).text = username.firstOrNull()?.uppercase() ?: "A"
-    }
-
-    private fun setupQuickActions() {
-        data class QuickAction(
-            val cardId: Int,
-            val iconViewId: Int,
-            val textViewId: Int,
-            val title: String,
-            val icon: Int
-        )
-
-        val actions = listOf(
-            QuickAction(R.id.btn_payment, R.id.actionIconPayment, R.id.actionTextPayment, "Payment", R.drawable.ic_payment_premium),
-            QuickAction(R.id.btn_search, R.id.actionIconSearch, R.id.actionTextSearch, "Search", R.drawable.ic_search_premium),
-            QuickAction(R.id.btn_new_customer, R.id.actionIconNewCustomer, R.id.actionTextNewCustomer, "New Connection", R.drawable.ic_new_user_premium),
-            QuickAction(R.id.btn_reports, R.id.actionIconReports, R.id.actionTextReports, "Analytics", R.drawable.ic_report_premium)
-        )
-
-        for ((id, iconViewId, textViewId, title, icon) in actions) {
-            val view = findViewById<View>(id)
-            view.findViewById<TextView>(textViewId).text = title
-            view.findViewById<ImageView>(iconViewId).setImageResource(icon)
-
-            view.setOnClickListener {
-                bounceAndNavigate(it) {
-                    when (id) {
-                        R.id.btn_payment -> startActivity(Intent(this, CollectorDashboardActivity::class.java))
-                        R.id.btn_search -> startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
-                        R.id.btn_new_customer -> startActivity(Intent(this, NewCustomerActivity::class.java))
-                        R.id.btn_reports -> startActivity(Intent(this, ReportActivity::class.java))
-                    }
-                }
-            }
-        }
-    }
-
-    private fun setupListeners() {
-        findViewById<View>(R.id.btnLangEn).setOnClickListener {
-            LocaleHelper.setLocale(this, "en")
-            recreate()
-        }
-        findViewById<View>(R.id.btnLangTe).setOnClickListener {
-            LocaleHelper.setLocale(this, "te")
-            recreate()
-        }
-
-        findViewById<View>(R.id.header).setOnClickListener {
+        findViewById<TextView>(R.id.tvProfileInitial).setOnLongClickListener {
             lifecycleScope.launch {
                 CustomerRepository().loadTestData()
                 Toast.makeText(this@DashboardActivity, "Test Data Loaded", Toast.LENGTH_SHORT).show()
             }
+            true
         }
 
-        findViewById<View>(R.id.layoutPaid).setOnClickListener {
-            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PAID"))
+        val roleLabel = when (role) {
+            "ADMIN" -> "Admin"
+            "EMPLOYEE" -> "Employee"
+            else -> "Technician"
         }
-        findViewById<View>(R.id.layoutUnpaid).setOnClickListener {
-            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "UNPAID"))
+        findViewById<TextView>(R.id.tvTopSubtitle).text = "$roleLabel · Vinayaka Cable Network"
+
+        btnThemeToggle.text = if (ThemeManager.getTheme(this) == ThemeManager.THEME_DARK) "🌙" else "☀️"
+        btnThemeToggle.setOnClickListener {
+            ThemeManager.toggleTheme(this)
+            recreate()
+        }
+
+        val btnLangEn = findViewById<TextView>(R.id.btnLangEn)
+        val btnLangTe = findViewById<TextView>(R.id.btnLangTe)
+        val currentLang = LocaleHelper.getLanguage(this)
+        styleLangButton(btnLangEn, currentLang == "en")
+        styleLangButton(btnLangTe, currentLang == "te")
+        btnLangEn.setOnClickListener {
+            LocaleHelper.setLocale(this, "en")
+            recreate()
+        }
+        btnLangTe.setOnClickListener {
+            LocaleHelper.setLocale(this, "te")
+            recreate()
+        }
+
+        val searchBox = findViewById<EditText>(R.id.etDashboardSearch)
+        searchBox.doAfterTextChanged { text ->
+            if ((text?.length ?: 0) > 1) {
+                startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
+            }
         }
     }
+
+    private fun styleLangButton(button: TextView, selected: Boolean) {
+        if (selected) {
+            button.setBackgroundResource(R.drawable.cm_gradient_blue)
+            button.setTextColor(getColorCompat(R.color.cm_on_gradient))
+        } else {
+            button.background = null
+            button.setTextColor(getColorCompat(R.color.cm_text_secondary))
+        }
+    }
+
+    private fun applyRoleVisibility() {
+        adminFinSection.visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
+        employeeFinSection.visibility = if (role == "EMPLOYEE") View.VISIBLE else View.GONE
+    }
+
+    private fun setupQuickActions() {
+        findViewById<View>(R.id.qaPayment).setOnClickListener {
+            startActivity(Intent(this, CollectorDashboardActivity::class.java))
+        }
+        findViewById<View>(R.id.qaAddCustomer).setOnClickListener {
+            startActivity(Intent(this, NewCustomerActivity::class.java))
+        }
+        findViewById<View>(R.id.qaPaid).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PAID"))
+        }
+        findViewById<View>(R.id.qaUnpaid).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "UNPAID"))
+        }
+        findViewById<View>(R.id.qaComplaints).setOnClickListener {
+            startActivity(Intent(this, ComplaintActivity::class.java))
+        }
+        findViewById<View>(R.id.qaReport).setOnClickListener {
+            startActivity(Intent(this, ReportActivity::class.java))
+        }
+
+        findViewById<View>(R.id.statTotal).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
+        }
+        findViewById<View>(R.id.statPaid).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PAID"))
+        }
+        findViewById<View>(R.id.statUnpaid).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "UNPAID"))
+        }
+        // CustomerListActivity does not support a "PARTIAL" filter yet (Customers redesign,
+        // a later sub-project) — it currently falls back to showing all customers.
+        findViewById<View>(R.id.statPartial).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PARTIAL"))
+        }
+    }
+
+    private fun setupTopBar() {
+        // topbar title/subtitle already bound in bindViews()
+    }
+
+    private fun setupBottomNav() {
+        val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+        bottomNav.selectedItemId = R.id.nav_home
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> true
+                R.id.nav_customers -> {
+                    startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
+                    false
+                }
+                R.id.nav_pay -> {
+                    startActivity(Intent(this, CollectorDashboardActivity::class.java))
+                    false
+                }
+                R.id.nav_complaints -> {
+                    startActivity(Intent(this, ComplaintActivity::class.java))
+                    false
+                }
+                R.id.nav_settings -> {
+                    Toast.makeText(this, "Settings screen is coming soon", Toast.LENGTH_SHORT).show()
+                    false
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun renderSixMonthTrend() {
+        // Illustrative trend — real 6-month historical aggregation is Reports-sub-project work.
+        val demoPercents = listOf(68, 82, 58, 88, 79, 77)
+        val monthFormat = SimpleDateFormat("MMM", Locale.ENGLISH)
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.MONTH, -5)
+
+        sixMonthBars.removeAllViews()
+        for ((index, percent) in demoPercents.withIndex()) {
+            val isCurrent = index == demoPercents.lastIndex
+            val column = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                gravity = android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL
+                layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
+                    marginStart = if (index == 0) 0 else 5
+                }
+            }
+            val bar = View(this).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 0
+                ).apply { weight = percent.toFloat() }
+                setBackgroundResource(if (isCurrent) R.drawable.cm_bg_soft_teal else R.drawable.cm_bg_soft_blue)
+            }
+            val spacer = View(this).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 0
+                ).apply { weight = (100 - percent).toFloat() }
+            }
+            val barColumn = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f
+                )
+                addView(spacer)
+                addView(bar)
+            }
+            column.addView(barColumn)
+
+            val label = TextView(this).apply {
+                text = monthFormat.format(cal.time)
+                textSize = 9f
+                setTextColor(getColorCompat(R.color.cm_text_tertiary))
+                gravity = android.view.Gravity.CENTER_HORIZONTAL
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+            column.addView(label)
+
+            sixMonthBars.addView(column)
+            cal.add(Calendar.MONTH, 1)
+        }
+    }
+
+    private fun getColorCompat(colorRes: Int): Int = androidx.core.content.ContextCompat.getColor(this, colorRes)
 
     override fun onResume() {
         super.onResume()
@@ -150,19 +290,38 @@ class DashboardActivity : BaseActivity() {
     private fun fetchCollectionSummaries() {
         lifecycleScope.launch {
             try {
-                val cal = Calendar.getInstance()
-                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
-                val todayStartMs = cal.timeInMillis
+                val dayCal = Calendar.getInstance()
+                dayCal.set(Calendar.HOUR_OF_DAY, 0); dayCal.set(Calendar.MINUTE, 0)
+                dayCal.set(Calendar.SECOND, 0); dayCal.set(Calendar.MILLISECOND, 0)
+                val todayStartMs = dayCal.timeInMillis
+
+                val monthCal = Calendar.getInstance()
+                monthCal.set(Calendar.DAY_OF_MONTH, 1)
+                monthCal.set(Calendar.HOUR_OF_DAY, 0); monthCal.set(Calendar.MINUTE, 0)
+                monthCal.set(Calendar.SECOND, 0); monthCal.set(Calendar.MILLISECOND, 0)
+                val monthStartMs = monthCal.timeInMillis
 
                 val todaySnap = db.collection("payments").whereGreaterThanOrEqualTo("timestamp", todayStartMs).get().await()
+                val monthSnap = db.collection("payments").whereGreaterThanOrEqualTo("timestamp", monthStartMs).get().await()
                 val customerSnap = db.collection("customers").get().await()
 
                 val todaySum = todaySnap.documents.sumOf { it.getDouble("paid") ?: 0.0 }
+                val monthCollectionSum = monthSnap.documents.sumOf { it.getDouble("paid") ?: 0.0 }
                 val outstandingSum = customerSnap.documents.sumOf { (it.get("pendingAmount") as? Number)?.toDouble() ?: 0.0 }
                 val baseSum = customerSnap.documents.sumOf { (it.get("baseAmount") as? Number)?.toDouble() ?: 0.0 }
 
                 tvTodayAmount.text = formatCurrency(todaySum)
-                tvTotalOutstanding.text = formatCurrency(outstandingSum + baseSum)
+                tvEmployeeToday.text = formatCurrency(todaySum)
+                tvTotalOutstanding.text = formatCurrency(outstandingSum)
+                tvMonthBilling.text = formatCurrency(baseSum)
+                tvMonthCollection.text = formatCurrency(monthCollectionSum)
+
+                val percent = if (baseSum > 0) ((monthCollectionSum / baseSum) * 100).coerceIn(0.0, 100.0) else 0.0
+                tvProgressPercent.text = "${percent.toInt()}%"
+                (progressFill.layoutParams as android.widget.LinearLayout.LayoutParams).weight = percent.toFloat()
+                (progressRemainder.layoutParams as android.widget.LinearLayout.LayoutParams).weight = (100 - percent).toFloat()
+                progressFill.requestLayout()
+                progressRemainder.requestLayout()
 
             } catch (e: Exception) {
                 android.util.Log.e("Dashboard", "Summary fetch failed: ${e.message}")
@@ -177,19 +336,25 @@ class DashboardActivity : BaseActivity() {
                 if (e != null || snapshot == null) return@addSnapshotListener
                 var paid = 0
                 var unpaid = 0
+                var partial = 0
                 var active = 0
                 for (doc in snapshot) {
                     val status = doc.getString("status") ?: "unpaid"
                     val conn = doc.getString("Connection Status") ?: "active"
                     if (conn.equals("active", true)) active++
-                    if (status.equals("paid", true)) paid++ else unpaid++
+                    when {
+                        status.equals("paid", true) -> paid++
+                        status.equals("partial", true) -> partial++
+                        else -> unpaid++
+                    }
                 }
                 tvPaidCount.text = paid.toString()
                 tvUnpaidCount.text = unpaid.toString()
+                tvPartialCount.text = partial.toString()
                 tvTotalCount.text = snapshot.size().toString()
                 tvActiveCount.text = active.toString()
             }
-        
+
         db.collection("complaints").whereEqualTo("status", "NEW").addSnapshotListener { snap, _ ->
             tvOpenComplaints.text = (snap?.size() ?: 0).toString()
         }
@@ -203,31 +368,6 @@ class DashboardActivity : BaseActivity() {
         }
     }
 
-    private fun bounceAndNavigate(view: View, action: () -> Unit) {
-        val bounce = AnimationUtils.loadAnimation(this, R.anim.button_bounce)
-        bounce.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-            override fun onAnimationStart(a: android.view.animation.Animation?) {}
-            override fun onAnimationRepeat(a: android.view.animation.Animation?) {}
-            override fun onAnimationEnd(a: android.view.animation.Animation?) { action() }
-        })
-        view.startAnimation(bounce)
-    }
-
-    private fun setupTactileTouch(vararg views: View) {
-        for (view in views) {
-            view.setOnTouchListener { v, event ->
-                when (event.action) {
-                    android.view.MotionEvent.ACTION_DOWN -> v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start()
-                    android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
-                }
-                false
-            }
-        }
-    }
-    
-    // Legacy / Mock fields for logic compatibility
-    private fun checkBluetoothPermissions() {}
-    private fun showPairedPrintersDialog() {}
     private fun showLogoutDialog() {
         getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).edit().clear().apply()
         startActivity(Intent(this, LoginActivity::class.java))

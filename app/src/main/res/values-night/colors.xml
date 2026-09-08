@@ -7,4 +7,28 @@
     <color name="dashboard_text_secondary">#A1A1AA</color>
     <color name="dashboard_icon_bg">#27272A</color>
     <color name="dashboard_bottom_nav">#16161D</color>
+
+    <!-- ══ CableManager design tokens (dark) — mockup-aligned ══ -->
+    <color name="cm_bg">#0C0F1A</color>
+    <color name="cm_card">#181C2E</color>
+    <color name="cm_card2">#1E2238</color>
+    <color name="cm_input_bg">#1E2238</color>
+    <color name="cm_border">#262B45</color>
+    <color name="cm_text_primary">#DDE1F0</color>
+    <color name="cm_text_secondary">#7E87A8</color>
+    <color name="cm_text_tertiary">#454D6A</color>
+    <color name="cm_sidebar">#0A0D18</color>
+    <color name="cm_divider">#0AFFFFFF</color>
+    <color name="cm_nav_active">#294F80FF</color>
+    <color name="cm_blue">#4F80FF</color>
+    <color name="cm_blue_soft">#244F80FF</color>
+    <color name="cm_coral">#FF6B6B</color>
+    <color name="cm_coral_soft">#21FF6B6B</color>
+    <color name="cm_amber">#FFB347</color>
+    <color name="cm_amber_soft">#21FFB347</color>
+    <color name="cm_teal">#38C5D4</color>
+    <color name="cm_teal_soft">#2138C5D4</color>
+    <color name="cm_sky">#60A5FA</color>
+    <color name="cm_sky_soft">#2160A5FA</color>
+    <color name="cm_on_gradient">#FFFFFF</color>
 </resources>

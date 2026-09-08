@@ -24,4 +24,28 @@
     <color name="accent_orange">#F59E0B</color>
     <color name="accent_pink">#EC4899</color>
     <color name="accent_purple">#A855F7</color>
+
+    <!-- ══ CableManager design tokens (light) — mockup-aligned ══ -->
+    <color name="cm_bg">#EEF1FB</color>
+    <color name="cm_card">#FFFFFF</color>
+    <color name="cm_card2">#F0F3FF</color>
+    <color name="cm_input_bg">#F0F3FF</color>
+    <color name="cm_border">#D8DFF5</color>
+    <color name="cm_text_primary">#1A1E35</color>
+    <color name="cm_text_secondary">#4D5580</color>
+    <color name="cm_text_tertiary">#9AA0C0</color>
+    <color name="cm_sidebar">#1A1E35</color>
+    <color name="cm_divider">#0D000000</color>
+    <color name="cm_nav_active">#1C2D5FE8</color>
+    <color name="cm_blue">#2D5FE8</color>
+    <color name="cm_blue_soft">#1A2D5FE8</color>
+    <color name="cm_coral">#E84545</color>
+    <color name="cm_coral_soft">#1AE84545</color>
+    <color name="cm_amber">#F08C00</color>
+    <color name="cm_amber_soft">#1AF08C00</color>
+    <color name="cm_teal">#1A9AAA</color>
+    <color name="cm_teal_soft">#1A1A9AAA</color>
+    <color name="cm_sky">#2563EB</color>
+    <color name="cm_sky_soft">#1A2563EB</color>
+    <color name="cm_on_gradient">#FFFFFF</color>
 </resources>
