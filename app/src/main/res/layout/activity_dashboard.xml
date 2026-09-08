@@ -164,8 +164,8 @@
                         app:cardElevation="2dp"
                         app:cardBackgroundColor="@color/dashboard_card">
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:gravity="center">
-                            <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_payment_premium" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Payment" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
+                            <ImageView android:id="@+id/actionIconPayment" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_payment_premium" />
+                            <TextView android:id="@+id/actionTextPayment" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Payment" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -179,8 +179,8 @@
                         app:cardElevation="2dp"
                         app:cardBackgroundColor="@color/dashboard_card">
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:gravity="center">
-                            <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_search_premium" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
+                            <ImageView android:id="@+id/actionIconSearch" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_search_premium" />
+                            <TextView android:id="@+id/actionTextSearch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -194,8 +194,8 @@
                         app:cardElevation="2dp"
                         app:cardBackgroundColor="@color/dashboard_card">
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:gravity="center">
-                            <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_new_user_premium" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="New Connection" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
+                            <ImageView android:id="@+id/actionIconNewCustomer" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_new_user_premium" />
+                            <TextView android:id="@+id/actionTextNewCustomer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="New Connection" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -209,8 +209,8 @@
                         app:cardElevation="2dp"
                         app:cardBackgroundColor="@color/dashboard_card">
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:gravity="center">
-                            <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_report_premium" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Reports" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
+                            <ImageView android:id="@+id/actionIconReports" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_report_premium" />
+                            <TextView android:id="@+id/actionTextReports" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Reports" android:layout_marginTop="8dp" android:textSize="13sp" android:textColor="@color/dashboard_text_primary" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </GridLayout>

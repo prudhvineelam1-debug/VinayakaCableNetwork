@@ -77,18 +77,26 @@ class DashboardActivity : BaseActivity() {
     }
 
     private fun setupQuickActions() {
-        val actions = listOf(
-            Triple(R.id.btn_payment, "Payment", R.drawable.ic_payment_premium),
-            Triple(R.id.btn_search, "Search", R.drawable.ic_search_premium),
-            Triple(R.id.btn_new_customer, "New Connection", R.drawable.ic_new_user_premium),
-            Triple(R.id.btn_reports, "Analytics", R.drawable.ic_report_premium)
+        data class QuickAction(
+            val cardId: Int,
+            val iconViewId: Int,
+            val textViewId: Int,
+            val title: String,
+            val icon: Int
         )
 
-        for ((id, title, icon) in actions) {
+        val actions = listOf(
+            QuickAction(R.id.btn_payment, R.id.actionIconPayment, R.id.actionTextPayment, "Payment", R.drawable.ic_payment_premium),
+            QuickAction(R.id.btn_search, R.id.actionIconSearch, R.id.actionTextSearch, "Search", R.drawable.ic_search_premium),
+            QuickAction(R.id.btn_new_customer, R.id.actionIconNewCustomer, R.id.actionTextNewCustomer, "New Connection", R.drawable.ic_new_user_premium),
+            QuickAction(R.id.btn_reports, R.id.actionIconReports, R.id.actionTextReports, "Analytics", R.drawable.ic_report_premium)
+        )
+
+        for ((id, iconViewId, textViewId, title, icon) in actions) {
             val view = findViewById<View>(id)
-            view.findViewById<TextView>(R.id.actionText).text = title
-            view.findViewById<ImageView>(R.id.actionIcon).setImageResource(icon)
-            
+            view.findViewById<TextView>(textViewId).text = title
+            view.findViewById<ImageView>(iconViewId).setImageResource(icon)
+
             view.setOnClickListener {
                 bounceAndNavigate(it) {
                     when (id) {
