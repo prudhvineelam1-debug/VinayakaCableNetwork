@@ -1,0 +1,46 @@
+<resources>
+
+    <!-- ══════════════════════════════════════════════════════════
+         DARK THEME
+    ══════════════════════════════════════════════════════════ -->
+    <style name="Theme.VinayakaCableNetwork" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Primary (Blue) -->
+        <item name="colorPrimary">#90CAF9</item>
+        <item name="colorOnPrimary">#003566</item>
+        <item name="colorPrimaryContainer">#1565C0</item>
+        <item name="colorOnPrimaryContainer">#D6E8FC</item>
+
+        <!-- Secondary (Green) -->
+        <item name="colorSecondary">#A5D6A7</item>
+        <item name="colorOnSecondary">#1B5E20</item>
+        <item name="colorSecondaryContainer">#2E7D32</item>
+        <item name="colorOnSecondaryContainer">#C8E6C9</item>
+
+        <!-- Tertiary (Teal/Cyan accent) -->
+        <item name="colorTertiary">#80DEEA</item>
+        <item name="colorOnTertiary">#004D56</item>
+        <item name="colorTertiaryContainer">#00696F</item>
+        <item name="colorOnTertiaryContainer">#B2EBF2</item>
+
+        <!-- Error (Red) -->
+        <item name="colorError">#F28B82</item>
+        <item name="colorOnError">#7F0000</item>
+        <item name="colorErrorContainer">#B71C1C</item>
+        <item name="colorOnErrorContainer">#FFCDD2</item>
+
+        <!-- Surface / Background -->
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#E2E2E6</item>
+        <item name="colorSurfaceVariant">#2C2C2C</item>
+        <item name="colorOnSurfaceVariant">#C4C6D0</item>
+        <item name="android:colorBackground">#121212</item>
+        <item name="colorOnBackground">#E2E2E6</item>
+
+        <!-- Outline -->
+        <item name="colorOutline">#8E9099</item>
+        <item name="colorOutlineVariant">#44474F</item>
+
+    </style>
+
+</resources>

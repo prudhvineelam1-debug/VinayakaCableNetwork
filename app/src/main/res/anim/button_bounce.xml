@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Premium "bounce" animation: quick scale-down to 90%, then spring back
+    to 100% with overshoot. Total duration ~250ms for a snappy feel.
+    Place in: res/anim/button_bounce.xml
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true">
+
+    <!-- Phase 1: Scale down to 90% -->
+    <scale
+        android:fromXScale="1.0"
+        android:toXScale="0.90"
+        android:fromYScale="1.0"
+        android:toYScale="0.90"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="100"
+        android:interpolator="@android:anim/decelerate_interpolator" />
+
+    <!-- Phase 2: Spring back to 100% with overshoot -->
+    <scale
+        android:fromXScale="0.90"
+        android:toXScale="1.0"
+        android:fromYScale="0.90"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="100"
+        android:duration="200"
+        android:interpolator="@android:anim/overshoot_interpolator" />
+
+</set>

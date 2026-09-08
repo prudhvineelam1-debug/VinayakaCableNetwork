@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39150119710",
+    "project_id": "vinayaka-cable",
+    "storage_bucket": "vinayaka-cable.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39150119710:android:cbd67210872500d214370f",
+        "android_client_info": {
+          "package_name": "com.saimega.vinayakacablenetwork"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc61_R8i5gHKjZczEPxYPNiDdYiEAkjWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

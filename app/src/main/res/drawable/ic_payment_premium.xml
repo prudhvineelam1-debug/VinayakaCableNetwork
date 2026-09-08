@@ -1,0 +1,65 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Wallet body — thick rounded rectangle -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M3,7.5C3,6.67 3.67,6 4.5,6h15c0.83,0 1.5,0.67 1.5,1.5v10c0,0.83 -0.67,1.5 -1.5,1.5h-15C3.67,19 3,18.33 3,17.5z" />
+
+    <!-- Wallet flap (top fold) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M5,6V5.5C5,4.67 5.67,4 6.5,4h11c0.83,0 1.5,0.67 1.5,1.5V6" />
+
+    <!-- Cash note sticking out top-right -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M15.5,3.5h3.5c0.55,0 1,0.45 1,1v2h-4.5c-0.55,0 -1,-0.45 -1,-1V4.5C14.5,3.95 14.95,3.5 15.5,3.5z" />
+
+    <!-- Rupee ₹ on the note -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M16.2,4.3h2v0.5h-0.8c0.25,0.18 0.42,0.45 0.47,0.77h0.33v0.5h-0.35c-0.1,0.5 -0.52,0.85 -1.02,0.85h-0.15l1,0.7h-0.85l-1,-0.7V6.42h0.65c0.28,0 0.5,-0.15 0.58,-0.35h-1.23v-0.5h1.15c-0.08,-0.2 -0.3,-0.37 -0.58,-0.37h-0.42V4.3z" />
+
+    <!-- Clasp / card slot on right -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M21,11h-2.5c-0.83,0 -1.5,0.67 -1.5,1.5v0c0,0.83 0.67,1.5 1.5,1.5H21" />
+
+    <!-- Coin circle inside clasp -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M18.5,12.5a0.75,0.75 0,1 1,0 1.5a0.75,0.75 0,1 1,0 -1.5z" />
+
+    <!-- Horizontal card line detail -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M6,10h6" />
+
+    <!-- Second line detail -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M6,13h4" />
+
+</vector>

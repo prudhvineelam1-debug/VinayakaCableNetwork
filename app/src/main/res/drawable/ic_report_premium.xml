@@ -1,0 +1,71 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Chart panel / clipboard outline -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M4,3.5C4,2.95 4.45,2.5 5,2.5h14c0.55,0 1,0.45 1,1v18c0,0.55 -0.45,1 -1,1H5c-0.55,0 -1,-0.45 -1,-1z" />
+
+    <!-- Clipboard tab -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M8.5,1.5h7c0.55,0 1,0.45 1,1v1c0,0.55 -0.45,1 -1,1h-7c-0.55,0 -1,-0.45 -1,-1v-1C7.5,1.95 7.95,1.5 8.5,1.5z" />
+
+    <!-- Bar 1 — short -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M7.5,19v-3" />
+
+    <!-- Bar 2 — tall -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M10.5,19v-6" />
+
+    <!-- Bar 3 — medium -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M13.5,19v-4.5" />
+
+    <!-- Bar 4 — tallest -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M16.5,19v-8" />
+
+    <!-- Trending up arrow line -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M7,14l3,-3.5l2.5,2L16,8.5" />
+
+    <!-- Arrow head -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M14,8.5h2v2" />
+
+</vector>

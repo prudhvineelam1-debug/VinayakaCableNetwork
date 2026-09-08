@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dashboard_bg">#0A0A0F</color>
+    <color name="dashboard_card">#16161D</color>
+    <color name="dashboard_border">#27272A</color>
+    <color name="dashboard_text_primary">#FFFFFF</color>
+    <color name="dashboard_text_secondary">#A1A1AA</color>
+    <color name="dashboard_icon_bg">#27272A</color>
+    <color name="dashboard_bottom_nav">#16161D</color>
+</resources>

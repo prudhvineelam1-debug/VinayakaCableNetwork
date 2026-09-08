@@ -1,0 +1,69 @@
+package com.saimega.vinayakacablenetwork
+
+import android.graphics.Color
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+
+class PaymentHistoryAdapter(
+    private var list: List<PaymentModel>,
+    private val onActionClick: (paymentId: String, action: String) -> Unit
+) : RecyclerView.Adapter<PaymentHistoryAdapter.ViewHolder>() {
+
+    fun updateData(newList: List<PaymentModel>) {
+        list = newList
+        notifyDataSetChanged()
+    }
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvDate: TextView   = view.findViewById(R.id.tvDate)
+        val tvMode: TextView   = view.findViewById(R.id.tvMode)
+        val tvStatus: TextView = view.findViewById(R.id.tvStatus)
+        val tvAmount: TextView = view.findViewById(R.id.tvAmount)
+        val btnView: MaterialButton  = view.findViewById(R.id.btnView)
+        val btnPrint: MaterialButton = view.findViewById(R.id.btnPrint)
+        val btnShare: MaterialButton = view.findViewById(R.id.btnShare)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_payment_history, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun getItemCount(): Int = list.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val p = list[position]
+
+        holder.tvDate.text = p.date.ifEmpty { "N/A" }
+        
+        holder.tvMode.text = when {
+            p.paymentMode.equals("Cash", ignoreCase = true) -> "Cash"
+            p.paymentNumber.isNotEmpty() -> "${p.paymentMode} · ${p.paymentNumber}"
+            else -> p.paymentMode
+        }
+
+        // Amount
+        val amountStr = if (p.paid == p.paid.toLong().toDouble()) p.paid.toLong().toString() else String.format("%.2f", p.paid)
+        holder.tvAmount.text = "₹ $amountStr"
+
+        // Status
+        if (p.remaining <= 0) {
+            holder.tvStatus.text = "Paid Fully"
+            holder.tvStatus.setTextColor(Color.parseColor("#2E7D32"))
+            holder.tvStatus.setBackgroundColor(Color.parseColor("#E8F5E9"))
+        } else {
+            holder.tvStatus.text = "Partial (Due: ₹${p.remaining})"
+            holder.tvStatus.setTextColor(Color.parseColor("#C62828"))
+            holder.tvStatus.setBackgroundColor(Color.parseColor("#FFEBEE"))
+        }
+
+        holder.btnView.setOnClickListener { onActionClick(p.paymentId, "VIEW") }
+        holder.btnPrint.setOnClickListener { onActionClick(p.paymentId, "PRINT") }
+        holder.btnShare.setOnClickListener { onActionClick(p.paymentId, "SHARE") }
+    }
+}

@@ -1,0 +1,217 @@
+<resources>
+    <string name="app_name">Vinayaka Cable Network</string>
+
+    <string name="action_payment">Payment</string>
+    <string name="action_search">Search</string>
+    <string name="action_new_customer">New Customer</string>
+    <string name="action_report">Report</string>
+
+    <string name="summary_today_collection">Today</string>
+    <string name="summary_month_collection">This Month</string>
+
+    <string name="status_unpaid">Unpaid</string>
+    <string name="status_paid">Paid</string>
+    <string name="revenue_overview">Revenue Overview</string>
+    <string name="total_billing_label">Total Billing</string>
+    <string name="collection_label">Collection</string>
+    <string name="outstanding_label">Outstanding</string>
+    <string name="operational_metrics">Operational Metrics</string>
+    <string name="today_cash_label">Today Cash</string>
+    <string name="today_count_label">Today Count</string>
+    <string name="one_time_label">One-Time</string>
+    <string name="payment_status_label">Payment Status</string>
+    <string name="full_paid_label">Full Paid</string>
+    <string name="partial_label">Partial</string>
+    <string name="customer_lifecycle_label">Customer Lifecycle</string>
+    <string name="total_reg_label">Total Reg</string>
+    <string name="active_label">Active</string>
+    <string name="inactive_label">Inactive</string>
+    <string name="service_desk_label">Service Desk</string>
+    <string name="open_complaints_label">Open Complaints</string>
+    <string name="resolved_today_label">Resolved Today</string>
+    <string name="create_complaint">Create Complaint</string>
+    <string name="complaint_history">Complaint History</string>
+    <string name="complaint_description">Complaint Description</string>
+    <string name="priority">Priority</string>
+    <string name="submit_complaint">Submit Complaint</string>
+
+    <string name="quick_actions">Quick Actions</string>
+    <string name="customer_status">Customer Status</string>
+    <string name="customers_label">customers</string>
+
+    <string name="collected_today">collected today</string>
+    <string name="collected_month">collected this month</string>
+
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="previous">Previous</string>
+    <string name="lorem_ipsum">Placeholder text</string>
+    <string name="collection_summary">Collection Summary</string>
+    <string name="next">Next</string>
+    <string name="language_toggle">తెలుగు</string>
+    <string name="lang_english">English</string>
+    <string name="lang_telugu">తెలుగు</string>
+
+    <!-- Missing String Resources -->
+    <string name="login_successful">Login Successful</string>
+    <string name="invalid_credentials">Invalid Username or Password</string>
+    <string name="enter_username">Enter Username</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="password_too_short">Password must be at least 4 characters</string>
+
+    <string name="vinayaka_cable_network">Vinayaka Cable Network</string>
+    <string name="search_customer">Search Customer</string>
+    <string name="searching">Searching...</string>
+    <string name="enter_series_number">Enter series number</string>
+    <string name="customer_not_found">Customer not found</string>
+    <string name="error_prefix">Error: %1$s</string>
+    <string name="customer_details_title">Customer Details</string>
+    <string name="name_label">Name</string>
+    <string name="final_bill_amount">Final Bill ₹%1$s</string>
+    <string name="submit_payment">Submit Payment</string>
+
+    <string name="customer_info_section">CUSTOMER INFO</string>
+    <string name="full_name_label">Full Name</string>
+    <string name="series_number_label">Series Number</string>
+    <string name="billing_summary_section">BILLING SUMMARY</string>
+    <string name="base_amount_value">Base Amount: ₹%1$s</string>
+    <string name="previous_due_value">Previous Due: ₹%1$s</string>
+    <string name="final_bill_value">Final Bill   ₹%1$s</string>
+    <string name="enter_amount_hint">Enter amount paid to see balance</string>
+    <string name="view_share_receipt">View / Share Receipt</string>
+
+    <string name="download_pdf">Download PDF</string>
+    <string name="export_csv">Export CSV</string>
+    <string name="search_customer_hint">Enter a Customer ID or Phone Number to search</string>
+
+    <string name="register_customer">Register Customer</string>
+    <string name="register_customer_desc">Fill in the details below to add a new customer to the network.</string>
+    <string name="customer_information">Customer Information</string>
+    <string name="billing_details">Billing Details</string>
+    <string name="new_customer_billing_note">New customers start with ₹0 previous due and are marked as \'unpaid\'.</string>
+    <string name="save_customer">Save Customer</string>
+
+    <string name="payment_receipt">Payment Receipt</string>
+    <string name="business_name_caps">VINAYAKA CABLE NETWORK</string>
+    <string name="dash">—</string>
+    <string name="date_label">Date</string>
+    <string name="base_amount_label">Base Amount</string>
+    <string name="extra_charges_label">Extra Charges</string>
+    <string name="amount_paid_label">Amount Paid</string>
+    <string name="payment_mode_label">Payment Mode</string>
+    <string name="rupee_value">₹ %1$s</string>
+    <string name="rupee_placeholder">₹ —</string>
+    <string name="payment_confirmed">✅  Payment Confirmed</string>
+    <string name="thank_you_payment">Thank you for your prompt payment!</string>
+    <string name="print_receipt">Print Receipt</string>
+    <string name="share_online">Share Online</string>
+
+    <string name="rupee_100">₹100</string>
+    <string name="cash_label">Cash</string>
+
+    <string name="series_format">Series: %1$s</string>
+    <string name="paid_caps">PAID</string>
+    <string name="unpaid_caps">UNPAID</string>
+    <string name="zero">0</string>
+
+
+    <!-- More Remaining Strings -->
+    <string name="login_text">Login</string>
+    <string name="financial_report">Financial Report</string>
+    <string name="monthly_report">Monthly Report</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="export_pdf">Export PDF</string>
+    <string name="day_report">Day Report</string>
+    <string name="total_collected">Total Collected: ₹%1$s</string>
+    <string name="payments_count">Payments: %1$d</string>
+    <string name="cash_amount">Cash: ₹%1$s</string>
+    <string name="upi_amount">UPI / Online: ₹%1$s</string>
+    <string name="no_payments_found">No payments found for this period.</string>
+
+    <string name="no_data_export">No data to export</string>
+    <string name="no_customer_id">No customer ID received.</string>
+    <string name="could_not_generate_pdf">Could not generate PDF.</string>
+    <string name="enter_valid_amount">Enter valid amount</string>
+    <string name="enter_payment_number">Enter payment number</string>
+    <string name="payment_successful">Payment Successful</string>
+    <string name="generating_receipt">Generating receipt...</string>
+    <string name="no_payment_records">No payment records found.</string>
+    <string name="failed_fetch_payment">Failed to fetch payment: %1$s</string>
+    <string name="error_generating_pdf">Error generating PDF</string>
+    <string name="select_start_date_first">Select start date first</string>
+    <string name="please_enter_all_required_fields">Please enter all required fields</string>
+    <string name="customer_added_successfully">Customer added successfully</string>
+    <string name="customer_name_required">Customer name is required</string>
+    <string name="series_number_required">Series number is required</string>
+    <string name="monthly_amount_required">Monthly amount is required</string>
+    <string name="enter_a_valid_amount">Enter a valid amount</string>
+    <string name="failed_prefix">Failed: %1$s</string>
+
+    <!-- More Remaining Strings -->
+    <string name="paid_with_tick">✅ Paid</string>
+    <string name="for_this_month">For this month: ₹%1$s</string>
+    <string name="download_type_pdf">Download %1$s PDF</string>
+    <string name="from_date">From: %1$s</string>
+
+
+    <!-- Final Toasts -->
+    <string name="saved_in_downloads">Saved in Downloads</string>
+    <string name="csv_saved_in_downloads">CSV Saved in Downloads</string>
+    <string name="csv_error_prefix">CSV Error: %1$s</string>
+
+
+    <!-- Input hints and toolbar titles -->
+    <string name="hint_enter_id_or_phone">Enter ID / Phone</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="hint_amount_paid">Amount Paid</string>
+    <string name="hint_name_or_series">Name or Series Number</string>
+    <string name="hint_extra_charges">DC / Extra Charges</string>
+    <string name="hint_payment_mode">Payment Mode</string>
+    <string name="hint_upi_number">PhonePe / UPI Number</string>
+    <string name="hint_full_name">Full Name</string>
+    <string name="hint_series_number">Series Number</string>
+    <string name="hint_base_monthly_amount">Base Monthly Amount (&#8377;)</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="title_search_customers">Search Customers</string>
+    <string name="title_add_new_customer">Add New Customer</string>
+    <string name="search">Search</string>
+
+    <!-- Payment History Strings -->
+    <string name="payment_history">Payment History</string>
+    <string name="summary">Summary</string>
+    <string name="total_paid">Total Paid</string>
+    <string name="payments_count_label">Payments Count</string>
+    <string name="last_payment">Last Payment</string>
+    <string name="view_receipt">View</string>
+    <string name="print">Print</string>
+    <string name="share">Share</string>
+
+    <!-- ── Missing dashboard / billing labels ── -->
+    <string name="dashboard">Dashboard</string>
+    <string name="total_customers">Total Customers</string>
+    <string name="paid_this_month">Paid This Month</string>
+    <string name="unpaid_this_month">Unpaid This Month</string>
+    <string name="partially_paid">Partially Paid</string>
+    <string name="today_collection">Today\'s Collection</string>
+    <string name="outstanding">Outstanding</string>
+    <string name="active_customers">Active Customers</string>
+    <string name="inactive_customers">Inactive Customers</string>
+    <string name="total_due">Total Due</string>
+    <string name="amount_paid">Amount Paid</string>
+    <string name="remaining_balance">Remaining Balance</string>
+    <string name="payment_mode">Payment Mode</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="area_label">Area / Locality</string>
+    <string name="hardware_details_label">Hardware Details (STB)</string>
+    <string name="box_number_label">Box Number</string>
+    <string name="vc_number_label">VC Number</string>
+    <string name="crf_number_label">CRF Number</string>
+    <string name="total_collected_today">TOTAL COLLECTED TODAY</string>
+    <string name="mode_breakdown">Mode-wise Breakdown</string>
+    <string name="today_transactions">Today\'s Transactions</string>
+    <string name="online_upi_label">Online / UPI</string>
+    <string name="payments_count_format">%1$d Payments</string>
+</resources>
