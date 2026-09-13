@@ -95,13 +95,6 @@ class DashboardActivity : BaseActivity() {
 
         val username = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("username", "Admin") ?: "Admin"
         findViewById<TextView>(R.id.tvProfileInitial).text = username.firstOrNull()?.uppercase() ?: "A"
-        findViewById<TextView>(R.id.tvProfileInitial).setOnLongClickListener {
-            lifecycleScope.launch {
-                CustomerRepository().loadTestData()
-                Toast.makeText(this@DashboardActivity, "Test Data Loaded", Toast.LENGTH_SHORT).show()
-            }
-            true
-        }
 
         val roleLabel = when (role) {
             "ADMIN" -> "Admin"

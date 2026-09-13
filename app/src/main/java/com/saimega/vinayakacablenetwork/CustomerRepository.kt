@@ -422,16 +422,6 @@ class CustomerRepository {
             .filter { it.paid > 0.0 }   // guard against ₹0 records
     }
 
-    suspend fun loadTestData() {
-        val testData = listOf(
-            CustomerModel(id = "604016190100103388", name = "Achanta Veedhi Achanta Krishna", teluguName = "ఆచంట వీధి ఆచంట కృష్ణ", baseAmount = 320.01, pendingAmount = 165.02, status = "partial", connectionStatus = "active", lastPaidMonth = "2024-05"),
-            CustomerModel(id = "69820062771", name = "Achanta Veedhi Adapa Satynarayana", teluguName = "ఆచంట వీధి అడపా సత్యనారాయణ", baseAmount = 233.64, pendingAmount = 127.44, status = "partial", connectionStatus = "active", lastPaidMonth = "2024-05"),
-            CustomerModel(id = "70021867067", name = "Achanta Veedhi Addala Maruthi", teluguName = "అచంట వీధి అడ్డాల మారుతి", baseAmount = 320.01, pendingAmount = 165.02, status = "partial", connectionStatus = "active", lastPaidMonth = "2024-05"),
-            CustomerModel(id = "456016211200336815", name = "Achanta Veedhi Balla Siva", teluguName = "అచంట వీధి బల్లా శివ", baseAmount = 320.01, pendingAmount = 165.02, status = "partial", connectionStatus = "active", lastPaidMonth = "2024-05")
-        )
-        importCustomerBatch(testData)
-    }
-
     suspend fun importCustomerBatch(customers: List<CustomerModel>) {
         val batch = db.batch()
         for (c in customers) {
