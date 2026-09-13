@@ -38,7 +38,6 @@ class DashboardActivity : BaseActivity() {
     private lateinit var adminFinSection: View
     private lateinit var employeeFinSection: View
     private lateinit var sixMonthBars: android.widget.LinearLayout
-    private lateinit var btnThemeToggle: TextView
 
     private var countListener: com.google.firebase.firestore.ListenerRegistration? = null
     private var role: String = "ADMIN"
@@ -91,7 +90,6 @@ class DashboardActivity : BaseActivity() {
         adminFinSection = findViewById(R.id.adminFinSection)
         employeeFinSection = findViewById(R.id.employeeFinSection)
         sixMonthBars = findViewById(R.id.sixMonthBars)
-        btnThemeToggle = findViewById(R.id.btnThemeToggle)
 
         val username = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("username", "Admin") ?: "Admin"
         findViewById<TextView>(R.id.tvProfileInitial).text = username.firstOrNull()?.uppercase() ?: "A"
@@ -103,41 +101,11 @@ class DashboardActivity : BaseActivity() {
         }
         findViewById<TextView>(R.id.tvTopSubtitle).text = "$roleLabel · Vinayaka Cable Network"
 
-        btnThemeToggle.text = if (ThemeManager.getTheme(this) == ThemeManager.THEME_DARK) "🌙" else "☀️"
-        btnThemeToggle.setOnClickListener {
-            ThemeManager.toggleTheme(this)
-            recreate()
-        }
-
-        val btnLangEn = findViewById<TextView>(R.id.btnLangEn)
-        val btnLangTe = findViewById<TextView>(R.id.btnLangTe)
-        val currentLang = LocaleHelper.getLanguage(this)
-        styleLangButton(btnLangEn, currentLang == "en")
-        styleLangButton(btnLangTe, currentLang == "te")
-        btnLangEn.setOnClickListener {
-            LocaleHelper.setLocale(this, "en")
-            recreate()
-        }
-        btnLangTe.setOnClickListener {
-            LocaleHelper.setLocale(this, "te")
-            recreate()
-        }
-
         val searchBox = findViewById<EditText>(R.id.etDashboardSearch)
         searchBox.doAfterTextChanged { text ->
             if ((text?.length ?: 0) > 1) {
                 startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
             }
-        }
-    }
-
-    private fun styleLangButton(button: TextView, selected: Boolean) {
-        if (selected) {
-            button.setBackgroundResource(R.drawable.cm_gradient_blue)
-            button.setTextColor(getColorCompat(R.color.cm_on_gradient))
-        } else {
-            button.background = null
-            button.setTextColor(getColorCompat(R.color.cm_text_secondary))
         }
     }
 
@@ -229,7 +197,7 @@ class DashboardActivity : BaseActivity() {
                     false
                 }
                 R.id.nav_settings -> {
-                    Toast.makeText(this, "Settings screen is coming soon", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, SettingsActivity::class.java))
                     false
                 }
                 else -> false
@@ -386,9 +354,4 @@ class DashboardActivity : BaseActivity() {
         }
     }
 
-    private fun showLogoutDialog() {
-        getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).edit().clear().apply()
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
-    }
 }
