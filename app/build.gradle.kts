@@ -68,4 +68,5 @@ dependencies {
     // ── RecyclerView ─────────────────────────────────────────────────────────
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
+    testImplementation(libs.junit)
 }
