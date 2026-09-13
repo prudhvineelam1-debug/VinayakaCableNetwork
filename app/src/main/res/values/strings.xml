@@ -55,6 +55,7 @@
     <!-- Missing String Resources -->
     <string name="login_successful">Login Successful</string>
     <string name="invalid_credentials">Invalid Username or Password</string>
+    <string name="account_deactivated">Your account has been deactivated. Contact your administrator.</string>
     <string name="enter_username">Enter Username</string>
     <string name="enter_password">Enter Password</string>
     <string name="password_too_short">Password must be at least 4 characters</string>

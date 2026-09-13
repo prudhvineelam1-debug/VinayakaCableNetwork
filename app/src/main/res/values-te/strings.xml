@@ -200,4 +200,5 @@
     <string name="logout">లాగ్ అవుట్</string>
     <string name="logout_confirm_title">లాగ్ అవుట్ చేయాలా?</string>
     <string name="logout_confirm_message">మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?</string>
+    <string name="account_deactivated">మీ ఖాతా నిష్క్రియం చేయబడింది. మీ నిర్వాహకుడిని సంప్రదించండి.</string>
 </resources>

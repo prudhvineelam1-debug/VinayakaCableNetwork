@@ -11,6 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class LoginActivity : BaseActivity() {
 
@@ -41,6 +43,10 @@ class LoginActivity : BaseActivity() {
         bindViews()
         restoreRememberedCredentials()
         setListeners()
+
+        lifecycleScope.launch {
+            AuthRepository().ensureSeeded()
+        }
     }
 
     // ── Bind all view references ───────────────────────────────────────────
@@ -134,37 +140,39 @@ class LoginActivity : BaseActivity() {
             return
         }
 
-        // Credential check (mocking multiple roles for now)
-        val role = when {
-            username == "admin" && password == "1234" -> "ADMIN"
-            username == "ravi"  && password == "1234" -> "EMPLOYEE"
-            username == "tech"  && password == "1234" -> "TECHNICIAN"
-            else -> null
-        }
+        btnLogin.isEnabled = false
+        lifecycleScope.launch {
+            when (val result = AuthRepository().login(username, password)) {
+                is LoginResult.Success -> {
+                    val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
+                    prefs.putString(KEY_USERNAME, result.username)
+                    prefs.putString(KEY_ROLE, result.role)
+                    if (cbRememberMe.isChecked) {
+                        prefs.putString(KEY_REMEMBERED, result.username)
+                        prefs.putBoolean(KEY_REMEMBER, true)
+                    } else {
+                        prefs.remove(KEY_REMEMBERED)
+                        prefs.putBoolean(KEY_REMEMBER, false)
+                    }
+                    prefs.apply()
 
-        if (role != null) {
-
-            // Persist "remember me" preference
-            val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
-            prefs.putString(KEY_USERNAME, username)
-            prefs.putString(KEY_ROLE, role)
-            if (cbRememberMe.isChecked) {
-                prefs.putString(KEY_REMEMBERED, username)
-                prefs.putBoolean(KEY_REMEMBER, true)
-            } else {
-                prefs.remove(KEY_REMEMBERED)
-                prefs.putBoolean(KEY_REMEMBER, false)
+                    Toast.makeText(this@LoginActivity, getString(R.string.login_successful), Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
+                    finish()
+                }
+                is LoginResult.InvalidCredentials -> {
+                    btnLogin.isEnabled = true
+                    Toast.makeText(this@LoginActivity, getString(R.string.invalid_credentials), Toast.LENGTH_SHORT).show()
+                }
+                is LoginResult.AccountDeactivated -> {
+                    btnLogin.isEnabled = true
+                    Toast.makeText(this@LoginActivity, getString(R.string.account_deactivated), Toast.LENGTH_LONG).show()
+                }
+                is LoginResult.Failure -> {
+                    btnLogin.isEnabled = true
+                    Toast.makeText(this@LoginActivity, getString(R.string.error_prefix, result.exception.message), Toast.LENGTH_LONG).show()
+                }
             }
-            prefs.apply()
-
-            Toast.makeText(this, getString(R.string.login_successful), Toast.LENGTH_SHORT).show()
-
-            // Navigate to Dashboard
-            startActivity(Intent(this, DashboardActivity::class.java))
-            finish()
-
-        } else {
-            Toast.makeText(this, getString(R.string.invalid_credentials), Toast.LENGTH_SHORT).show()
         }
     }
 }
