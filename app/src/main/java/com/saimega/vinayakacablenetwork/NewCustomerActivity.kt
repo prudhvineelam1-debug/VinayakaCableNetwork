@@ -34,6 +34,14 @@ class NewCustomerActivity : BaseActivity() {
     // ─────────────────────────────────────────────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", "EMPLOYEE") ?: "EMPLOYEE"
+        if (role != "ADMIN") {
+            Toast.makeText(this, getString(R.string.no_permission_message), Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_new_customer)
 
         db = FirebaseFirestore.getInstance()

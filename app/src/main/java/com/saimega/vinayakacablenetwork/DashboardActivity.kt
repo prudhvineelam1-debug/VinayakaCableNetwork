@@ -112,6 +112,7 @@ class DashboardActivity : BaseActivity() {
     private fun applyRoleVisibility() {
         adminFinSection.visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
         employeeFinSection.visibility = if (role == "EMPLOYEE") View.VISIBLE else View.GONE
+        findViewById<View>(R.id.qaAddCustomer).visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
     }
 
     private fun setupQuickActions() {
