@@ -12,6 +12,12 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+sealed class BillingRunResult {
+    data class Success(val customersBilled: Int) : BillingRunResult()
+    object AlreadyRun : BillingRunResult()
+    data class Failure(val exception: Exception) : BillingRunResult()
+}
+
 class CustomerRepository {
 
     companion object {
@@ -189,6 +195,70 @@ class CustomerRepository {
     }
 
 
+
+    // =========================
+    // MONTHLY BILL GENERATION
+    // =========================
+
+    /**
+     * Advances every active customer's billing cycle: pendingAmount becomes
+     * whatever was left unpaid plus this month's monthlyCharge (the
+     * carry-forward rule). Deactivated customers are skipped entirely.
+     *
+     * Idempotent per [monthKey]: if meta/billing.lastGeneratedMonth already
+     * equals [monthKey], this is a no-op that returns [BillingRunResult.AlreadyRun].
+     */
+    suspend fun generateMonthlyBills(monthKey: String): BillingRunResult {
+        return try {
+            val metaRef = db.collection("meta").document("billing")
+            val metaSnap = metaRef.get(Source.SERVER).await()
+            if (metaSnap.getString("lastGeneratedMonth") == monthKey) {
+                return BillingRunResult.AlreadyRun
+            }
+
+            val snapshot = db.collection("customers")
+                .whereEqualTo("Connection Status", "active")
+                .get(Source.SERVER)
+                .await()
+
+            val states = snapshot.documents.map { doc ->
+                CustomerBillingState(
+                    id = doc.id,
+                    connectionStatus = doc.getString("Connection Status") ?: "active",
+                    pendingAmount = (doc.get("pendingAmount") as? Number)?.toDouble() ?: 0.0,
+                    monthlyCharge = (doc.get("monthlyCharge") as? Number)?.toDouble() ?: 0.0
+                )
+            }
+
+            val updates = BillingCycle.computeMonthlyBillUpdates(states)
+
+            updates.chunked(500).forEach { chunk ->
+                val batch = db.batch()
+                for (update in chunk) {
+                    val ref = db.collection("customers").document(update.id)
+                    batch.update(ref, mapOf(
+                        "pendingAmount" to update.newPendingAmount,
+                        "lastBilledMonth" to monthKey,
+                        "status" to "unpaid",
+                        "paymentStatus" to "Unpaid"
+                    ))
+                }
+                batch.commit().await()
+            }
+
+            metaRef.set(
+                mapOf(
+                    "lastGeneratedMonth" to monthKey,
+                    "lastGeneratedAt" to System.currentTimeMillis()
+                ),
+                SetOptions.merge()
+            ).await()
+
+            BillingRunResult.Success(updates.size)
+        } catch (e: Exception) {
+            BillingRunResult.Failure(e)
+        }
+    }
 
     /**
      * Rebuilds a billing document for the given customer and month from the
