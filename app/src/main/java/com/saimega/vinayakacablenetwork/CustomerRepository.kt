@@ -49,7 +49,8 @@ class CustomerRepository {
             paymentStatus = paymentStatusRaw ?: statusVal ?: "Unpaid",
             connectionStatus = connStatus,
             deactivatedMonth = doc.getString("deactivatedMonth"),
-            lastPaidMonth = doc.getString("lastPaidMonth") ?: ""
+            lastPaidMonth = doc.getString("lastPaidMonth") ?: "",
+            lastBilledMonth = doc.getString("lastBilledMonth") ?: ""
         )
     }
 

@@ -17,6 +17,7 @@ data class CustomerModel(
     val connectionStatus: String = "active", // "active" or "deactivated"
     val deactivatedMonth: String? = null,
     val lastPaidMonth: String = "",
+    val lastBilledMonth: String = "",
     val vcNumber: String = "",
     val boxNumber: String = "",
     val crfNumber: String = "",
