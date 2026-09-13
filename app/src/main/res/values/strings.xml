@@ -84,6 +84,13 @@
     <string name="logout">Logout</string>
     <string name="logout_confirm_title">Log Out?</string>
     <string name="logout_confirm_message">Are you sure you want to log out?</string>
+    <string name="change_password">Change Password</string>
+    <string name="current_password_hint">Current Password</string>
+    <string name="new_password_hint">New Password</string>
+    <string name="confirm_new_password_hint">Confirm New Password</string>
+    <string name="passwords_do_not_match">New passwords do not match</string>
+    <string name="password_changed_successfully">Password changed successfully</string>
+    <string name="incorrect_current_password">Current password is incorrect</string>
     <string name="customer_name_label">Customer Name</string>
     <string name="billing_summary_section">BILLING SUMMARY</string>
     <string name="base_amount_value">Base Amount: ₹%1$s</string>

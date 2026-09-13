@@ -201,4 +201,11 @@
     <string name="logout_confirm_title">లాగ్ అవుట్ చేయాలా?</string>
     <string name="logout_confirm_message">మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?</string>
     <string name="account_deactivated">మీ ఖాతా నిష్క్రియం చేయబడింది. మీ నిర్వాహకుడిని సంప్రదించండి.</string>
+    <string name="change_password">పాస్‌వర్డ్ మార్చండి</string>
+    <string name="current_password_hint">ప్రస్తుత పాస్‌వర్డ్</string>
+    <string name="new_password_hint">కొత్త పాస్‌వర్డ్</string>
+    <string name="confirm_new_password_hint">కొత్త పాస్‌వర్డ్ నిర్ధారించండి</string>
+    <string name="passwords_do_not_match">కొత్త పాస్‌వర్డ్‌లు సరిపోలలేదు</string>
+    <string name="password_changed_successfully">పాస్‌వర్డ్ విజయవంతంగా మార్చబడింది</string>
+    <string name="incorrect_current_password">ప్రస్తుత పాస్‌వర్డ్ తప్పు</string>
 </resources>

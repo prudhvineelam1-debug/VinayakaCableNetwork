@@ -79,6 +79,14 @@
                         android:text="@string/logout"
                         android:backgroundTint="@color/accent_red" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/change_password" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

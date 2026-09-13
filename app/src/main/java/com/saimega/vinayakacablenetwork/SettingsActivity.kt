@@ -2,17 +2,23 @@ package com.saimega.vinayakacablenetwork
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
 
     private lateinit var tvLoggedInAs: TextView
     private lateinit var tvAppVersion: TextView
     private lateinit var btnLogout: MaterialButton
+    private lateinit var btnChangePassword: MaterialButton
     private lateinit var btnThemeDark: TextView
     private lateinit var btnThemeLight: TextView
     private lateinit var btnLangEn: TextView
@@ -37,6 +43,7 @@ class SettingsActivity : BaseActivity() {
         tvLoggedInAs = findViewById(R.id.tvLoggedInAs)
         tvAppVersion = findViewById(R.id.tvAppVersion)
         btnLogout = findViewById(R.id.btnLogout)
+        btnChangePassword = findViewById(R.id.btnChangePassword)
         btnThemeDark = findViewById(R.id.btnThemeDark)
         btnThemeLight = findViewById(R.id.btnThemeLight)
         btnLangEn = findViewById(R.id.btnLangEn)
@@ -57,12 +64,56 @@ class SettingsActivity : BaseActivity() {
                 .setPositiveButton(R.string.logout) { _, _ -> performLogout() }
                 .show()
         }
+
+        btnChangePassword.setOnClickListener {
+            showChangePasswordDialog()
+        }
     }
 
     private fun performLogout() {
         getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).edit().clear().apply()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
+    }
+
+    private fun showChangePasswordDialog() {
+        val prefs = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+        val username = prefs.getString("username", null) ?: return
+
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_password, null)
+        val etCurrentPassword = dialogView.findViewById<EditText>(R.id.etCurrentPassword)
+        val etNewPassword = dialogView.findViewById<EditText>(R.id.etNewPassword)
+        val etConfirmNewPassword = dialogView.findViewById<EditText>(R.id.etConfirmNewPassword)
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.change_password)
+            .setView(dialogView)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.change_password) { _, _ ->
+                val current = etCurrentPassword.text.toString()
+                val newPassword = etNewPassword.text.toString()
+                val confirm = etConfirmNewPassword.text.toString()
+
+                if (newPassword != confirm) {
+                    Toast.makeText(this, getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                lifecycleScope.launch {
+                    when (AuthRepository().changePassword(username, current, newPassword)) {
+                        is ChangePasswordResult.Success -> {
+                            Toast.makeText(this@SettingsActivity, getString(R.string.password_changed_successfully), Toast.LENGTH_SHORT).show()
+                        }
+                        is ChangePasswordResult.IncorrectCurrentPassword -> {
+                            Toast.makeText(this@SettingsActivity, getString(R.string.incorrect_current_password), Toast.LENGTH_SHORT).show()
+                        }
+                        is ChangePasswordResult.Failure -> {
+                            Toast.makeText(this@SettingsActivity, getString(R.string.error_prefix, "unknown"), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+            .show()
     }
 
     private fun bindAppearanceSection() {
