@@ -8,6 +8,7 @@ import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.os.CancellationSignal
+import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.print.PageRange
 import android.print.PrintAttributes
@@ -140,6 +141,10 @@ class ReceiptActivity : BaseActivity() {
                     printReceipt()
                 } else if (action == "SHARE") {
                     shareReceipt()
+                } else if (action == "DOWNLOAD") {
+                    downloadReceipt()
+                } else if (action == "WHATSAPP") {
+                    shareToWhatsApp()
                 }
 
             } catch (e: Exception) {
@@ -305,6 +310,53 @@ class ReceiptActivity : BaseActivity() {
 
         } catch (e: Exception) {
             Log.e("ReceiptActivity", "Share error: ${e.message}", e)
+            Toast.makeText(this, getString(R.string.error_prefix, e.message), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun downloadReceipt() {
+        val pdfFile = generateReceiptPdf() ?: run {
+            Toast.makeText(this, getString(R.string.could_not_generate_pdf), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val dateStr = latestPayment?.date?.replace("/", "-") ?: "invoice"
+            val outFile = File(downloadsDir, "Invoice_${customerId}_$dateStr.pdf")
+            pdfFile.copyTo(outFile, overwrite = true)
+
+            Toast.makeText(this, getString(R.string.saved_in_downloads), Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Log.e("ReceiptActivity", "Download error: ${e.message}", e)
+            Toast.makeText(this, getString(R.string.error_prefix, e.message), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun shareToWhatsApp() {
+        val pdfFile = generateReceiptPdf() ?: run {
+            Toast.makeText(this, getString(R.string.could_not_generate_pdf), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", pdfFile)
+
+            val whatsappIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/pdf"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                setPackage("com.whatsapp")
+            }
+
+            if (whatsappIntent.resolveActivity(packageManager) != null) {
+                startActivity(whatsappIntent)
+            } else {
+                Toast.makeText(this, "WhatsApp not installed — showing share options instead", Toast.LENGTH_SHORT).show()
+                shareReceipt()
+            }
+        } catch (e: Exception) {
+            Log.e("ReceiptActivity", "WhatsApp share error: ${e.message}", e)
             Toast.makeText(this, getString(R.string.error_prefix, e.message), Toast.LENGTH_LONG).show()
         }
     }
