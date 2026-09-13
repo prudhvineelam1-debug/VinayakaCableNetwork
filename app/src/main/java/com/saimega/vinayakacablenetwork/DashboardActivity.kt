@@ -178,8 +178,6 @@ class DashboardActivity : BaseActivity() {
         findViewById<View>(R.id.statUnpaid).setOnClickListener {
             startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "UNPAID"))
         }
-        // CustomerListActivity does not support a "PARTIAL" filter yet (Customers redesign,
-        // a later sub-project) — it currently falls back to showing all customers.
         findViewById<View>(R.id.statPartial).setOnClickListener {
             startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PARTIAL"))
         }

@@ -80,7 +80,7 @@ class CustomerListActivity : BaseActivity() {
             ?: intent.getStringExtra("type")
             ?: "ALL"
         type = filterExtra.lowercase()
-        if (type !in listOf("paid", "unpaid", "all")) type = "all"
+        if (type !in listOf("paid", "unpaid", "partial", "all")) type = "all"
 
         btnDownload.text = getString(R.string.download_type_pdf, type.replaceFirstChar { it.uppercase() })
         btnDownloadCsv.visibility = View.GONE
@@ -104,6 +104,12 @@ class CustomerListActivity : BaseActivity() {
                 chipAll.visibility      = View.GONE
                 chipPaid.visibility     = View.GONE
                 chipUnpaid.visibility   = View.VISIBLE
+                btnDownloadPdfBar.visibility = View.VISIBLE
+            }
+            "partial" -> {
+                chipAll.visibility     = View.GONE
+                chipUnpaid.visibility  = View.GONE
+                chipPaid.visibility    = View.GONE
                 btnDownloadPdfBar.visibility = View.VISIBLE
             }
             else -> {
