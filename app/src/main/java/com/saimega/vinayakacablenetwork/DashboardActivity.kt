@@ -3,10 +3,8 @@ package com.saimega.vinayakacablenetwork
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -41,9 +39,6 @@ class DashboardActivity : BaseActivity() {
 
     private var countListener: com.google.firebase.firestore.ListenerRegistration? = null
     private var role: String = Roles.ADMIN
-    private var allCustomersCache: List<CustomerModel> = emptyList()
-    private val customerRepository = CustomerRepository()
-    private lateinit var searchResultsContainer: android.widget.LinearLayout
 
     private val currencyFormatter: NumberFormat by lazy {
         NumberFormat.getCurrencyInstance(Locale("en", "IN"))
@@ -104,55 +99,7 @@ class DashboardActivity : BaseActivity() {
         }
         findViewById<TextView>(R.id.tvTopSubtitle).text = "$roleLabel · Vinayaka Cable Network"
 
-        searchResultsContainer = findViewById(R.id.searchResultsContainer)
-        setupDashboardSearch()
         setupStatCardNavigation()
-    }
-
-    private fun setupDashboardSearch() {
-        val searchBox = findViewById<EditText>(R.id.etDashboardSearch)
-        searchBox.doAfterTextChanged { text ->
-            val query = text?.toString().orEmpty().trim()
-            if (query.isEmpty()) {
-                searchResultsContainer.visibility = View.GONE
-                return@doAfterTextChanged
-            }
-
-            val lower = query.lowercase()
-            val matches = allCustomersCache.filter { c ->
-                c.name.lowercase().contains(lower) ||
-                    c.id.lowercase().contains(lower) ||
-                    c.phone.contains(query) ||
-                    c.boxNumber.lowercase().contains(lower)
-            }.sortedWith(
-                compareByDescending<CustomerModel> { it.name.lowercase().startsWith(lower) || it.id.lowercase().startsWith(lower) }
-                    .thenBy { it.name.lowercase() }
-            ).take(8)
-
-            renderSearchResults(matches)
-        }
-    }
-
-    private fun renderSearchResults(matches: List<CustomerModel>) {
-        searchResultsContainer.removeAllViews()
-        if (matches.isEmpty()) {
-            searchResultsContainer.visibility = View.GONE
-            return
-        }
-        for (customer in matches) {
-            val row = layoutInflater.inflate(R.layout.item_search_result_row, searchResultsContainer, false)
-            row.findViewById<TextView>(R.id.tvResultName).text = customer.name
-            row.findViewById<TextView>(R.id.tvResultSubtitle).text = "${customer.id} · ${customer.phone}"
-            row.setOnClickListener {
-                val intent = Intent(this, CustomerDetailsActivity::class.java).apply {
-                    putExtra("seriesNumber", customer.id)
-                    putExtra("customerModel", customer)
-                }
-                startActivity(intent)
-            }
-            searchResultsContainer.addView(row)
-        }
-        searchResultsContainer.visibility = View.VISIBLE
     }
 
     private fun setupStatCardNavigation() {
@@ -401,8 +348,6 @@ class DashboardActivity : BaseActivity() {
                 tvPartialCount.text = partial.toString()
                 tvTotalCount.text = snapshot.size().toString()
                 tvActiveCount.text = active.toString()
-
-                allCustomersCache = snapshot.documents.map { customerRepository.mapDocToCustomer(it) }
             }
 
         db.collection("complaints").whereEqualTo("status", "NEW").addSnapshotListener { snap, _ ->

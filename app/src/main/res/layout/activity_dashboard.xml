@@ -124,48 +124,6 @@
                     </LinearLayout>
                 </HorizontalScrollView>
 
-                <!-- Search bar -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/cm_bg_card"
-                    android:paddingHorizontal="13dp"
-                    android:layout_marginBottom="13dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🔍"
-                        android:textSize="14sp" />
-
-                    <EditText
-                        android:id="@+id/etDashboardSearch"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginStart="9dp"
-                        android:background="@android:color/transparent"
-                        android:hint="Search name, ID, mobile, box no..."
-                        android:textColorHint="@color/cm_text_tertiary"
-                        android:textColor="@color/cm_text_primary"
-                        android:textSize="13sp"
-                        android:singleLine="true"
-                        android:imeOptions="actionSearch" />
-                </LinearLayout>
-
-                <!-- Live search results (typeahead) -->
-                <LinearLayout
-                    android:id="@+id/searchResultsContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/cm_bg_card"
-                    android:padding="7dp"
-                    android:layout_marginBottom="13dp"
-                    android:visibility="gone" />
-
                 <!-- 2x2 stat grid -->
                 <LinearLayout
                     android:layout_width="match_parent"
