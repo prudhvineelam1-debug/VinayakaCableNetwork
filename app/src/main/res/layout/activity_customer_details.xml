@@ -271,6 +271,26 @@
                 android:layout_marginBottom="12dp" />
 
             <Button
+                android:id="@+id/btnDownloadInvoice"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Download Invoice"
+                android:visibility="gone"
+                app:cornerRadius="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnShareWhatsapp"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Share via WhatsApp"
+                android:visibility="gone"
+                app:cornerRadius="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
                 android:id="@+id/btnViewHistory"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"

@@ -45,6 +45,8 @@ class CustomerDetailsActivity : BaseActivity() {
 
     private lateinit var btnSubmit: Button
     private lateinit var btnViewReceipt: Button
+    private lateinit var btnDownloadInvoice: Button
+    private lateinit var btnShareWhatsapp: Button
     private lateinit var btnViewHistory: Button
     private lateinit var btnCreateComplaint: Button
 
@@ -112,6 +114,8 @@ class CustomerDetailsActivity : BaseActivity() {
 
         btnSubmit = findViewById(R.id.btnSubmitPayment)
         btnViewReceipt = findViewById(R.id.btnViewReceipt)
+        btnDownloadInvoice = findViewById(R.id.btnDownloadInvoice)
+        btnShareWhatsapp = findViewById(R.id.btnShareWhatsapp)
         btnViewHistory = findViewById(R.id.btnViewHistory)
         btnCreateComplaint = findViewById(R.id.btnCreateComplaint)
     }
@@ -132,6 +136,20 @@ class CustomerDetailsActivity : BaseActivity() {
         btnViewReceipt.setOnClickListener {
             val intent = Intent(this, ReceiptActivity::class.java)
             intent.putExtra("CUSTOMER_ID", currentCustomer?.id)
+            startActivity(intent)
+        }
+
+        btnDownloadInvoice.setOnClickListener {
+            val intent = Intent(this, ReceiptActivity::class.java)
+            intent.putExtra("CUSTOMER_ID", currentCustomer?.id)
+            intent.putExtra("ACTION", "DOWNLOAD")
+            startActivity(intent)
+        }
+
+        btnShareWhatsapp.setOnClickListener {
+            val intent = Intent(this, ReceiptActivity::class.java)
+            intent.putExtra("CUSTOMER_ID", currentCustomer?.id)
+            intent.putExtra("ACTION", "WHATSAPP")
             startActivity(intent)
         }
 
@@ -175,9 +193,13 @@ class CustomerDetailsActivity : BaseActivity() {
         if (c.status.equals("paid", true)) {
             findViewById<View>(R.id.paymentFormArea).visibility = View.GONE
             btnViewReceipt.visibility = View.VISIBLE
+            btnDownloadInvoice.visibility = View.VISIBLE
+            btnShareWhatsapp.visibility = View.VISIBLE
         } else {
             findViewById<View>(R.id.paymentFormArea).visibility = View.VISIBLE
             btnViewReceipt.visibility = View.GONE
+            btnDownloadInvoice.visibility = View.GONE
+            btnShareWhatsapp.visibility = View.GONE
         }
 
         calculateFinalBill()
