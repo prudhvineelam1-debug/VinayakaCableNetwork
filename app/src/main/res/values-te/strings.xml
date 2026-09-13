@@ -208,4 +208,18 @@
     <string name="passwords_do_not_match">కొత్త పాస్‌వర్డ్‌లు సరిపోలలేదు</string>
     <string name="password_changed_successfully">పాస్‌వర్డ్ విజయవంతంగా మార్చబడింది</string>
     <string name="incorrect_current_password">ప్రస్తుత పాస్‌వర్డ్ తప్పు</string>
+    <string name="team_section">టీమ్</string>
+    <string name="manage_employees">ఉద్యోగులను నిర్వహించండి</string>
+    <string name="add_employee">ఉద్యోగిని జోడించండి</string>
+    <string name="edit_employee">ఉద్యోగిని సవరించండి</string>
+    <string name="role_label">పాత్ర</string>
+    <string name="initial_password_hint">ప్రారంభ పాస్‌వర్డ్</string>
+    <string name="confirm_password_hint">పాస్‌వర్డ్ నిర్ధారించండి</string>
+    <string name="username_already_exists">యూజర్‌నేమ్ ఇప్పటికే ఉంది</string>
+    <string name="employee_added_successfully">ఉద్యోగి విజయవంతంగా జోడించబడ్డారు</string>
+    <string name="employee_updated_successfully">ఉద్యోగి విజయవంతంగా నవీకరించబడ్డారు</string>
+    <string name="cannot_deactivate_self">మీరు మీ స్వంత ఖాతాను నిష్క్రియం చేయలేరు</string>
+    <string name="no_permission_message">ఈ స్క్రీన్‌ను యాక్సెస్ చేయడానికి మీకు అనుమతి లేదు</string>
+    <string name="status_active">యాక్టివ్</string>
+    <string name="status_inactive">ఇన్యాక్టివ్</string>
 </resources>

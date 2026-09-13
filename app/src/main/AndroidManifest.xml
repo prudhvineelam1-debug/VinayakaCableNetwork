@@ -93,6 +93,11 @@
             android:name=".SettingsActivity"
             android:exported="false" />
 
+        <!-- EMPLOYEE MANAGEMENT (ADMIN only) -->
+        <activity
+            android:name=".EmployeeListActivity"
+            android:exported="false" />
+
         <!-- DATA IMPORT -->
         <activity
             android:name=".DataImportActivity"

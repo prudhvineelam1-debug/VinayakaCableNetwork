@@ -3,6 +3,7 @@ package com.saimega.vinayakacablenetwork
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
@@ -23,6 +25,8 @@ class SettingsActivity : BaseActivity() {
     private lateinit var btnThemeLight: TextView
     private lateinit var btnLangEn: TextView
     private lateinit var btnLangTe: TextView
+    private lateinit var cardTeamSection: MaterialCardView
+    private lateinit var btnManageEmployees: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,7 @@ class SettingsActivity : BaseActivity() {
 
         bindViews()
         bindAccountSection()
+        bindTeamSection()
         bindAppearanceSection()
         bindLanguageSection()
         bindAboutSection()
@@ -48,6 +53,8 @@ class SettingsActivity : BaseActivity() {
         btnThemeLight = findViewById(R.id.btnThemeLight)
         btnLangEn = findViewById(R.id.btnLangEn)
         btnLangTe = findViewById(R.id.btnLangTe)
+        cardTeamSection = findViewById(R.id.cardTeamSection)
+        btnManageEmployees = findViewById(R.id.btnManageEmployees)
     }
 
     private fun bindAccountSection() {
@@ -67,6 +74,15 @@ class SettingsActivity : BaseActivity() {
 
         btnChangePassword.setOnClickListener {
             showChangePasswordDialog()
+        }
+    }
+
+    private fun bindTeamSection() {
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", "EMPLOYEE") ?: "EMPLOYEE"
+        cardTeamSection.visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
+
+        btnManageEmployees.setOnClickListener {
+            startActivity(Intent(this, EmployeeListActivity::class.java))
         }
     }
 
