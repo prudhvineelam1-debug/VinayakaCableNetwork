@@ -3,7 +3,7 @@
     <!-- ══════════════════════════════════════════════════════════
          LIGHT THEME
     ══════════════════════════════════════════════════════════ -->
-    <style name="Theme.VinayakaCableNetwork" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.VinayakaCableNetwork" parent="Theme.Material3.DayNight.NoActionBar">
 
         <!-- Primary (Blue) -->
         <item name="colorPrimary">#1E88E5</item>
