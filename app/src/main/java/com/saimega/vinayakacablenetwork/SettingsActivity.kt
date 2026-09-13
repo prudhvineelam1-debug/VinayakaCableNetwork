@@ -60,7 +60,7 @@ class SettingsActivity : BaseActivity() {
     private fun bindAccountSection() {
         val prefs = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
         val username = prefs.getString("username", "Admin") ?: "Admin"
-        val role = prefs.getString("user_role", "ADMIN") ?: "ADMIN"
+        val role = prefs.getString("user_role", Roles.ADMIN) ?: Roles.ADMIN
         tvLoggedInAs.text = getString(R.string.logged_in_as, username, role)
 
         btnLogout.setOnClickListener {
@@ -78,8 +78,8 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun bindTeamSection() {
-        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", "EMPLOYEE") ?: "EMPLOYEE"
-        cardTeamSection.visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE
+        cardTeamSection.visibility = if (role == Roles.ADMIN) View.VISIBLE else View.GONE
 
         btnManageEmployees.setOnClickListener {
             startActivity(Intent(this, EmployeeListActivity::class.java))

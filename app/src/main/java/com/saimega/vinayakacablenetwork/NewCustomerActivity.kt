@@ -35,8 +35,8 @@ class NewCustomerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", "EMPLOYEE") ?: "EMPLOYEE"
-        if (role != "ADMIN") {
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE
+        if (role != Roles.ADMIN) {
             Toast.makeText(this, getString(R.string.no_permission_message), Toast.LENGTH_LONG).show()
             finish()
             return

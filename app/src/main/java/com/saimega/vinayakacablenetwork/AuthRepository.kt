@@ -46,9 +46,9 @@ class AuthRepository {
         if (!snapshot.isEmpty) return
 
         val seedAccounts = listOf(
-            Triple("admin", "Admin", "ADMIN"),
-            Triple("ravi", "Ravi", "EMPLOYEE"),
-            Triple("tech", "Technician", "TECHNICIAN")
+            Triple("admin", "Admin", Roles.ADMIN),
+            Triple("ravi", "Ravi", Roles.EMPLOYEE),
+            Triple("tech", "Technician", Roles.TECHNICIAN)
         )
 
         val batch = db.batch()
@@ -86,7 +86,7 @@ class AuthRepository {
             LoginResult.Success(
                 username = docId,
                 name = doc.getString("name") ?: docId,
-                role = doc.getString("role") ?: "EMPLOYEE"
+                role = doc.getString("role") ?: Roles.EMPLOYEE
             )
         } catch (e: Exception) {
             LoginResult.Failure(e)
@@ -120,7 +120,7 @@ class AuthRepository {
             UserAccount(
                 username = doc.getString("username") ?: doc.id,
                 name = doc.getString("name") ?: doc.id,
-                role = doc.getString("role") ?: "EMPLOYEE",
+                role = doc.getString("role") ?: Roles.EMPLOYEE,
                 active = doc.getBoolean("active") ?: true
             )
         }

@@ -78,7 +78,7 @@ class EmployeeListActivity : BaseActivity() {
         val switchActive = dialogView.findViewById<Switch>(R.id.switchActive)
         val tvSelfGuardNote = dialogView.findViewById<TextView>(R.id.tvSelfGuardNote)
 
-        val roles = listOf("ADMIN", "EMPLOYEE", "TECHNICIAN")
+        val roles = Roles.ALL
         actvRole.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, roles))
         actvRole.setText(employee.role, false)
         actvRole.setOnClickListener { actvRole.showDropDown() }
@@ -117,9 +117,9 @@ class EmployeeListActivity : BaseActivity() {
         val etConfirmPassword = dialogView.findViewById<EditText>(R.id.etNewConfirmPassword)
         val actvRole = dialogView.findViewById<AutoCompleteTextView>(R.id.actvNewRole)
 
-        val roles = listOf("ADMIN", "EMPLOYEE", "TECHNICIAN")
+        val roles = Roles.ALL
         actvRole.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, roles))
-        actvRole.setText("EMPLOYEE", false)
+        actvRole.setText(Roles.EMPLOYEE, false)
         actvRole.setOnClickListener { actvRole.showDropDown() }
 
         AlertDialog.Builder(this)
@@ -131,7 +131,7 @@ class EmployeeListActivity : BaseActivity() {
                 val name = etFullName.text.toString().trim()
                 val password = etPassword.text.toString()
                 val confirmPassword = etConfirmPassword.text.toString()
-                val role = actvRole.text.toString().ifBlank { "EMPLOYEE" }
+                val role = actvRole.text.toString().ifBlank { Roles.EMPLOYEE }
 
                 if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
                     Toast.makeText(this, getString(R.string.please_enter_all_required_fields), Toast.LENGTH_SHORT).show()
