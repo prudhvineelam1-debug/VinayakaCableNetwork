@@ -34,13 +34,18 @@ object BluetoothPrinterHelper {
 
                 val modeText = if (paymentNumber.isNotEmpty()) "$paymentMode ($paymentNumber)" else paymentMode
 
+                val businessName   = context.getString(R.string.business_name_caps)
+                val receiptTitle   = context.getString(R.string.payment_receipt)
+                val seriesLabel    = context.getString(R.string.series_number_label)
+                val thankYouLine   = context.getString(R.string.thank_you_payment)
+
                 val receiptText = """
-                    [C]<b>VINAYAKA CABLE NETWORK</b>
-                    [C]Payment Receipt
+                    [C]<b>$businessName</b>
+                    [C]$receiptTitle
                     [L]
                     [C]--------------------------------
                     [L]Name: [R]$customerName
-                    [L]Series No: [R]$customerId
+                    [L]$seriesLabel: [R]$customerId
                     [L]Date: [R]$date
                     [L]Base Amount: [R]Rs.$baseAmount
                     [L]Extra Charges: [R]Rs.$extraCharges
@@ -49,7 +54,7 @@ object BluetoothPrinterHelper {
                     [C]--------------------------------
                     [L]Mode: [R]$modeText
                     [L]
-                    [C]Thank you for your prompt payment!
+                    [C]$thankYouLine
                     [L]
                     [L]
                 """.trimIndent()
