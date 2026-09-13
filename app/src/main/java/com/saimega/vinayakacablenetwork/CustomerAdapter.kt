@@ -158,22 +158,26 @@ class CustomerAdapter(
     /**
      * Called when the ViewModel emits a new page.
      * Stores the full list and re-applies any active search filter.
+     * Returns the resulting (post-filter) item count so callers can drive
+     * empty-state visibility without racing ListAdapter's async DiffUtil dispatch.
      */
-    fun submitFullList(newList: List<CustomerModel>) {
+    fun submitFullList(newList: List<CustomerModel>): Int {
         fullList = newList
-        // Re-apply existing filter so new pages also respect the active search query
-        applyFilter(currentQuery)
+        return applyFilter(currentQuery)
     }
 
-    /** Instantly filters the displayed list without touching Firestore. */
-    fun filter(query: String) {
+    /**
+     * Instantly filters the displayed list without touching Firestore.
+     * Returns the resulting item count (see [submitFullList]).
+     */
+    fun filter(query: String): Int {
         currentQuery = query
-        applyFilter(query)
+        return applyFilter(query)
     }
 
     private var currentQuery = ""
 
-    private fun applyFilter(query: String) {
+    private fun applyFilter(query: String): Int {
         val filtered = if (query.isBlank()) {
             fullList
         } else {
@@ -182,7 +186,11 @@ class CustomerAdapter(
                 c.name.lowercase().contains(lower) ||
                 c.id.lowercase().contains(lower)
             }
-        }
+        }.sortedWith(
+            compareByDescending<CustomerModel> { it.name.lowercase().startsWith(query.lowercase()) }
+                .thenBy { it.name.lowercase() }
+        )
         submitList(filtered)
+        return filtered.size
     }
 }

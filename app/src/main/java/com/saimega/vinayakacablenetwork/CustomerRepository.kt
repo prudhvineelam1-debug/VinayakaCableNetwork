@@ -35,7 +35,7 @@ class CustomerRepository {
     // CUSTOMER PAGINATION
     // =========================
 
-    private fun mapDocToCustomer(doc: DocumentSnapshot): CustomerModel {
+    fun mapDocToCustomer(doc: DocumentSnapshot): CustomerModel {
         val rawStatus = doc.getString("status")?.trim()
         val statusVal = if (rawStatus.isNullOrEmpty()) "DATA_ERROR" else rawStatus
         val paymentStatusRaw = doc.getString("paymentStatus")?.trim()

@@ -40,7 +40,10 @@ class DashboardActivity : BaseActivity() {
     private lateinit var sixMonthBars: android.widget.LinearLayout
 
     private var countListener: com.google.firebase.firestore.ListenerRegistration? = null
-    private var role: String = "ADMIN"
+    private var role: String = Roles.ADMIN
+    private var allCustomersCache: List<CustomerModel> = emptyList()
+    private val customerRepository = CustomerRepository()
+    private lateinit var searchResultsContainer: android.widget.LinearLayout
 
     private val currencyFormatter: NumberFormat by lazy {
         NumberFormat.getCurrencyInstance(Locale("en", "IN"))
@@ -51,7 +54,7 @@ class DashboardActivity : BaseActivity() {
         setContentView(R.layout.activity_dashboard)
 
         db = FirebaseFirestore.getInstance()
-        role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", "ADMIN") ?: "ADMIN"
+        role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", Roles.ADMIN) ?: Roles.ADMIN
 
         bindViews()
         applyRoleVisibility()
@@ -95,24 +98,82 @@ class DashboardActivity : BaseActivity() {
         findViewById<TextView>(R.id.tvProfileInitial).text = username.firstOrNull()?.uppercase() ?: "A"
 
         val roleLabel = when (role) {
-            "ADMIN" -> "Admin"
-            "EMPLOYEE" -> "Employee"
+            Roles.ADMIN -> "Admin"
+            Roles.EMPLOYEE -> "Employee"
             else -> "Technician"
         }
         findViewById<TextView>(R.id.tvTopSubtitle).text = "$roleLabel · Vinayaka Cable Network"
 
+        searchResultsContainer = findViewById(R.id.searchResultsContainer)
+        setupDashboardSearch()
+        setupStatCardNavigation()
+    }
+
+    private fun setupDashboardSearch() {
         val searchBox = findViewById<EditText>(R.id.etDashboardSearch)
         searchBox.doAfterTextChanged { text ->
-            if ((text?.length ?: 0) > 1) {
-                startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
+            val query = text?.toString().orEmpty().trim()
+            if (query.isEmpty()) {
+                searchResultsContainer.visibility = View.GONE
+                return@doAfterTextChanged
             }
+
+            val lower = query.lowercase()
+            val matches = allCustomersCache.filter { c ->
+                c.name.lowercase().contains(lower) ||
+                    c.id.lowercase().contains(lower) ||
+                    c.phone.contains(query) ||
+                    c.boxNumber.lowercase().contains(lower)
+            }.sortedWith(
+                compareByDescending<CustomerModel> { it.name.lowercase().startsWith(lower) || it.id.lowercase().startsWith(lower) }
+                    .thenBy { it.name.lowercase() }
+            ).take(8)
+
+            renderSearchResults(matches)
+        }
+    }
+
+    private fun renderSearchResults(matches: List<CustomerModel>) {
+        searchResultsContainer.removeAllViews()
+        if (matches.isEmpty()) {
+            searchResultsContainer.visibility = View.GONE
+            return
+        }
+        for (customer in matches) {
+            val row = layoutInflater.inflate(R.layout.item_search_result_row, searchResultsContainer, false)
+            row.findViewById<TextView>(R.id.tvResultName).text = customer.name
+            row.findViewById<TextView>(R.id.tvResultSubtitle).text = "${customer.id} · ${customer.phone}"
+            row.setOnClickListener {
+                val intent = Intent(this, CustomerDetailsActivity::class.java).apply {
+                    putExtra("seriesNumber", customer.id)
+                    putExtra("customerModel", customer)
+                }
+                startActivity(intent)
+            }
+            searchResultsContainer.addView(row)
+        }
+        searchResultsContainer.visibility = View.VISIBLE
+    }
+
+    private fun setupStatCardNavigation() {
+        findViewById<View>(R.id.statTotal).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
+        }
+        findViewById<View>(R.id.statPaid).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PAID"))
+        }
+        findViewById<View>(R.id.statUnpaid).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "UNPAID"))
+        }
+        findViewById<View>(R.id.statPartial).setOnClickListener {
+            startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PARTIAL"))
         }
     }
 
     private fun applyRoleVisibility() {
-        adminFinSection.visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
-        employeeFinSection.visibility = if (role == "EMPLOYEE") View.VISIBLE else View.GONE
-        findViewById<View>(R.id.qaAddCustomer).visibility = if (role == "ADMIN") View.VISIBLE else View.GONE
+        adminFinSection.visibility = if (role == Roles.ADMIN) View.VISIBLE else View.GONE
+        employeeFinSection.visibility = if (role == Roles.EMPLOYEE) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.qaAddCustomer).visibility = if (role == Roles.ADMIN) View.VISIBLE else View.GONE
     }
 
     private fun setupQuickActions() {
@@ -340,6 +401,8 @@ class DashboardActivity : BaseActivity() {
                 tvPartialCount.text = partial.toString()
                 tvTotalCount.text = snapshot.size().toString()
                 tvActiveCount.text = active.toString()
+
+                allCustomersCache = snapshot.documents.map { customerRepository.mapDocToCustomer(it) }
             }
 
         db.collection("complaints").whereEqualTo("status", "NEW").addSnapshotListener { snap, _ ->

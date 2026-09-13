@@ -190,33 +190,28 @@ class CustomerListActivity : BaseActivity() {
     private fun setupSearch() {
         // Live filter as user types — zero Firestore calls
         etSearch.doAfterTextChanged { text ->
-            val query = text?.toString().orEmpty()
-            adapter.filter(query)
-            updateResultVisibility(query)
+            updateResultVisibility(adapter.filter(text?.toString().orEmpty()))
         }
 
         // Optional: IME "Search" key does the same thing
         etSearch.setOnEditorActionListener { _, _, _ ->
-            val query = etSearch.text?.toString().orEmpty()
-            adapter.filter(query)
-            updateResultVisibility(query)
+            updateResultVisibility(adapter.filter(etSearch.text?.toString().orEmpty()))
             false
         }
 
         // Explicit search button tap
         btnSearch.setOnClickListener {
-            val query = etSearch.text?.toString().orEmpty()
-            adapter.filter(query)
-            updateResultVisibility(query)
+            updateResultVisibility(adapter.filter(etSearch.text?.toString().orEmpty()))
         }
     }
 
     /**
-     * Shows the RecyclerView and hides the empty state while a query is active.
-     * When the field is cleared, the empty-state returns.
+     * Shows the RecyclerView when there are results to display (whether from
+     * the type filter alone or combined with a typed search query) and shows
+     * the empty state only when the result count is actually zero.
      */
-    private fun updateResultVisibility(query: String) {
-        if (query.isBlank()) {
+    private fun updateResultVisibility(resultCount: Int) {
+        if (resultCount == 0) {
             rvCustomers.visibility      = View.GONE
             layoutEmptyState.visibility = View.VISIBLE
         } else {
@@ -229,15 +224,8 @@ class CustomerListActivity : BaseActivity() {
     private fun observeViewModel() {
 
         viewModel.customers.observe(this) { list ->
-            adapter.submitFullList(list)
-            // Re-apply the active query so new pages also respect it
-            val query = etSearch.text?.toString().orEmpty()
-            adapter.filter(query)
-            // Only toggle empty state when user has typed something
-            if (query.isNotBlank() && list.isEmpty()) {
-                rvCustomers.visibility      = View.GONE
-                layoutEmptyState.visibility = View.VISIBLE
-            }
+            val resultCount = adapter.submitFullList(list)
+            updateResultVisibility(resultCount)
         }
 
         viewModel.isLoading.observe(this) { loading ->
