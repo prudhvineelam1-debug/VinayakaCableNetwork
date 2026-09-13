@@ -88,6 +88,11 @@
             android:name=".ComplaintActivity"
             android:exported="false" />
 
+        <!-- SETTINGS -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+
         <!-- DATA IMPORT -->
         <activity
             android:name=".DataImportActivity"

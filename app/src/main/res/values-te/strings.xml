@@ -191,4 +191,13 @@
     <string name="view_share_receipt">రసీదు వీక్షించండి / షేర్ చేయండి</string>
     <string name="vinayaka_cable_network">వినాయక కేబుల్ నెట్‌వర్క్</string>
     <string name="zero">0</string>
+    <string name="logged_in_as">%1$s (%2$s) గా లాగిన్ అయ్యారు</string>
+    <string name="account_section">ఖాతా</string>
+    <string name="appearance_section">కనిపించే తీరు</string>
+    <string name="language_section">భాష</string>
+    <string name="about_section">గురించి</string>
+    <string name="app_version_label">యాప్ వెర్షన్</string>
+    <string name="logout">లాగ్ అవుట్</string>
+    <string name="logout_confirm_title">లాగ్ అవుట్ చేయాలా?</string>
+    <string name="logout_confirm_message">మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?</string>
 </resources>
