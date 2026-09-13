@@ -325,11 +325,11 @@ class ReceiptActivity : BaseActivity() {
         paint.textAlign = Paint.Align.CENTER
         paint.textSize  = 20f
         paint.typeface  = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        canvas.drawText("VINAYAKA CABLE NETWORK", width / 2, 65f, paint)
+        canvas.drawText(getString(R.string.business_name_caps), width / 2, 65f, paint)
 
         paint.textSize = 13f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        canvas.drawText("Payment Receipt", width / 2, 92f, paint)
+        canvas.drawText(getString(R.string.payment_receipt), width / 2, 92f, paint)
 
         // Body rows
         val labelX = 40f
@@ -360,18 +360,18 @@ class ReceiptActivity : BaseActivity() {
             y += rowGap
         }
 
-        drawRow("Customer Name",  p.name)
-        drawRow("Series Number",  customerId)
-        drawRow("Date",           p.date)
-        drawRow("Base Amount",    "₹ ${formatAmount(p.baseAmount)}")
-        drawRow("Extra Charges",  "₹ ${formatAmount(p.extraCharges)}")
+        drawRow(getString(R.string.customer_name_label),  p.name)
+        drawRow(getString(R.string.series_number_label),  customerId)
+        drawRow(getString(R.string.date_label),            p.date)
+        drawRow(getString(R.string.base_amount_label),    "₹ ${formatAmount(p.baseAmount)}")
+        drawRow(getString(R.string.extra_charges_label),  "₹ ${formatAmount(p.extraCharges)}")
         drawRow(
-            "Total Paid Amount",
+            getString(R.string.total_paid),
             "₹ ${formatAmount(p.paid)}",
             valueColor = Color.parseColor("#2E7D32"),
             valueSize  = 18f
         )
-        drawRow("Payment Mode", buildModeText(p.paymentMode, p.paymentNumber))
+        drawRow(getString(R.string.payment_mode_label), buildModeText(p.paymentMode, p.paymentNumber))
 
         // Footer
         y += 20f
@@ -379,7 +379,7 @@ class ReceiptActivity : BaseActivity() {
         paint.typeface  = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
         paint.color     = Color.parseColor("#558B2F")
         paint.textSize  = 12f
-        canvas.drawText("Thank you for your prompt payment!", width / 2, y, paint)
+        canvas.drawText(getString(R.string.thank_you_payment), width / 2, y, paint)
     }
 
     private fun buildModeText(mode: String, number: String): String =

@@ -73,6 +73,7 @@
     <string name="customer_info_section">CUSTOMER INFO</string>
     <string name="full_name_label">Full Name</string>
     <string name="series_number_label">Series Number</string>
+    <string name="customer_name_label">Customer Name</string>
     <string name="billing_summary_section">BILLING SUMMARY</string>
     <string name="base_amount_value">Base Amount: ₹%1$s</string>
     <string name="previous_due_value">Previous Due: ₹%1$s</string>
