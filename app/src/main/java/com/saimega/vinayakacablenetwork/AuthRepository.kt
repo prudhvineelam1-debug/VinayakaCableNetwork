@@ -17,6 +17,19 @@ sealed class ChangePasswordResult {
     data class Failure(val exception: Exception) : ChangePasswordResult()
 }
 
+data class UserAccount(
+    val username: String,
+    val name: String,
+    val role: String,
+    val active: Boolean
+)
+
+sealed class CreateEmployeeResult {
+    object Success : CreateEmployeeResult()
+    object UsernameAlreadyExists : CreateEmployeeResult()
+    data class Failure(val exception: Exception) : CreateEmployeeResult()
+}
+
 class AuthRepository {
 
     private val db = FirebaseFirestore.getInstance()
@@ -98,6 +111,53 @@ class AuthRepository {
             ChangePasswordResult.Success
         } catch (e: Exception) {
             ChangePasswordResult.Failure(e)
+        }
+    }
+
+    suspend fun listUsers(): List<UserAccount> {
+        val snapshot = db.collection("users").get(Source.SERVER).await()
+        return snapshot.documents.map { doc ->
+            UserAccount(
+                username = doc.getString("username") ?: doc.id,
+                name = doc.getString("name") ?: doc.id,
+                role = doc.getString("role") ?: "EMPLOYEE",
+                active = doc.getBoolean("active") ?: true
+            )
+        }
+    }
+
+    suspend fun createEmployee(username: String, name: String, password: String, role: String): CreateEmployeeResult {
+        return try {
+            val docId = username.trim().lowercase()
+            val ref = db.collection("users").document(docId)
+            val existing = ref.get(Source.SERVER).await()
+            if (existing.exists()) return CreateEmployeeResult.UsernameAlreadyExists
+
+            val salt = PasswordHasher.generateSalt()
+            val hash = PasswordHasher.hash(password, salt)
+            ref.set(mapOf(
+                "username" to docId,
+                "name" to name,
+                "passwordHash" to hash,
+                "passwordSalt" to salt,
+                "role" to role,
+                "active" to true,
+                "createdAt" to System.currentTimeMillis()
+            )).await()
+            CreateEmployeeResult.Success
+        } catch (e: Exception) {
+            CreateEmployeeResult.Failure(e)
+        }
+    }
+
+    suspend fun updateUserRoleAndActive(username: String, role: String, active: Boolean): Boolean {
+        return try {
+            db.collection("users").document(username.trim().lowercase())
+                .update(mapOf("role" to role, "active" to active))
+                .await()
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 }
