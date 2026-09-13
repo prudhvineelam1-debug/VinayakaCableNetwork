@@ -14,6 +14,7 @@ import kotlinx.coroutines.tasks.await
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class DashboardActivity : BaseActivity() {
@@ -171,6 +172,9 @@ class DashboardActivity : BaseActivity() {
         findViewById<View>(R.id.qaReport).setOnClickListener {
             startActivity(Intent(this, ReportActivity::class.java))
         }
+        findViewById<View>(R.id.qaGenerateBills).setOnClickListener {
+            showGenerateBillsConfirmation()
+        }
 
         findViewById<View>(R.id.statTotal).setOnClickListener {
             startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "ALL"))
@@ -185,6 +189,29 @@ class DashboardActivity : BaseActivity() {
         // a later sub-project) — it currently falls back to showing all customers.
         findViewById<View>(R.id.statPartial).setOnClickListener {
             startActivity(Intent(this, CustomerListActivity::class.java).putExtra("FILTER_TYPE", "PARTIAL"))
+        }
+    }
+
+    private fun showGenerateBillsConfirmation() {
+        val monthKey = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
+        val monthLabel = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(Date())
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Generate Bills")
+            .setMessage("Generate bills for $monthLabel for all active customers?")
+            .setPositiveButton("Generate") { _, _ -> runGenerateBills(monthKey) }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun runGenerateBills(monthKey: String) {
+        lifecycleScope.launch {
+            val result = CustomerRepository().generateMonthlyBills(monthKey)
+            val message = when (result) {
+                is BillingRunResult.Success -> "Bills generated for ${result.customersBilled} customers."
+                is BillingRunResult.AlreadyRun -> "Bills for this month were already generated."
+                is BillingRunResult.Failure -> "Error: ${result.exception.message}"
+            }
+            Toast.makeText(this@DashboardActivity, message, Toast.LENGTH_LONG).show()
         }
     }
 
