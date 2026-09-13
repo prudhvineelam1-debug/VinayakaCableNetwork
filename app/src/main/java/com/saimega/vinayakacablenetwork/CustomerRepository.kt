@@ -216,8 +216,13 @@ class CustomerRepository {
                 return BillingRunResult.AlreadyRun
             }
 
+            // Fetch all and filter client-side (not whereEqualTo): many customer
+            // documents (e.g. anything created via NewCustomerActivity) have no
+            // "Connection Status" field at all, and Firestore's whereEqualTo can
+            // never match a missing field. mapDocToCustomer's default-to-"active"
+            // convention is what determines status for those documents, so the
+            // query must fetch everything and apply that same default here.
             val snapshot = db.collection("customers")
-                .whereEqualTo("Connection Status", "active")
                 .get(Source.SERVER)
                 .await()
 
