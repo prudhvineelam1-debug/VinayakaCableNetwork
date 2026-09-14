@@ -21,6 +21,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            // Debug-signed for direct sideload/testing. Not suitable for Play
+            // Store — publishing there needs a dedicated release keystore.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

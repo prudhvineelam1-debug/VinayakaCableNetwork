@@ -103,7 +103,6 @@ class ReportActivity : BaseActivity() {
         btnPdf         = findViewById(R.id.btnPdf)
 
         recyclerReport.layoutManager = LinearLayoutManager(this)
-        recyclerReport.setHasFixedSize(true)        // perf hint for fixed-size items
 
         // FIX: Attach an empty adapter immediately so the RecyclerView has
         // something to measure against during the first layout pass.  This
