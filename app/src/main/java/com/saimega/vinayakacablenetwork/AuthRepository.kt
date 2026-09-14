@@ -42,7 +42,11 @@ class AuthRepository {
      * existing staff — they should change it via Settings afterward.
      */
     suspend fun ensureSeeded() {
-        val snapshot = db.collection("users").limit(1).get(Source.SERVER).await()
+        val snapshot = try {
+            db.collection("users").limit(1).get(Source.SERVER).await()
+        } catch (e: Exception) {
+            return
+        }
         if (!snapshot.isEmpty) return
 
         val seedAccounts = listOf(

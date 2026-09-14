@@ -180,13 +180,23 @@ class CustomerDetailsActivity : BaseActivity() {
     }
 
     private fun setupListeners() {
-        val watcher = object : TextWatcher {
+        // Extra Charges also re-syncs Amount Paid to the new total — so the
+        // field starts pre-filled with what's actually owed instead of
+        // making staff retype a number already shown on screen, while
+        // staying freely editable afterward for partial/extra payments.
+        etManualAmount.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                syncAmountPaidToTotal()
+                calculateFinalBill()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        etAmountPaid.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) { calculateFinalBill() }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-        etManualAmount.addTextChangedListener(watcher)
-        etAmountPaid.addTextChangedListener(watcher)
+        })
 
         btnSubmit.setOnClickListener {
             handlePayment()
@@ -261,7 +271,24 @@ class CustomerDetailsActivity : BaseActivity() {
             btnShareWhatsapp.visibility = View.GONE
         }
 
+        // Pre-fill Amount Paid with what's actually owed (base + arrears),
+        // so the field isn't blank when a genuinely calculated value is
+        // already known — staff can still edit it for a partial payment.
+        if (!c.status.equals("paid", true)) {
+            syncAmountPaidToTotal()
+        }
+
         calculateFinalBill()
+    }
+
+    /** Sets Amount Paid to Base + Arrears + Extra Charges (the current total due). */
+    private fun syncAmountPaidToTotal() {
+        val c = currentCustomer ?: return
+        val extra = etManualAmount.text.toString().toDoubleOrNull() ?: 0.0
+        val total = c.baseAmount + c.pendingAmount + extra
+        val text = if (total == total.toLong().toDouble()) total.toLong().toString() else total.toString()
+        etAmountPaid.setText(text)
+        etAmountPaid.setSelection(text.length)
     }
 
     private fun calculateFinalBill() {
