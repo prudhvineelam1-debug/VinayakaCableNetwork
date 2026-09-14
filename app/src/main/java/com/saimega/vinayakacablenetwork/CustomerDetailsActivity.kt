@@ -7,10 +7,14 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class CustomerDetailsActivity : BaseActivity() {
 
@@ -50,17 +54,26 @@ class CustomerDetailsActivity : BaseActivity() {
     private lateinit var btnViewHistory: Button
     private lateinit var btnCreateComplaint: Button
 
+    private lateinit var rowEditDelete: View
+    private lateinit var btnEditCustomer: Button
+    private lateinit var btnDeleteCustomer: Button
+
     private var currentCustomer: CustomerModel? = null
     private val repository = CustomerRepository()
+    private val auditLogRepository = AuditLogRepository()
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_customer_details)
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
+
         bindViews()
         setupPaymentMode()
         setupListeners()
+        setupEditDelete()
 
         val series = intent.getStringExtra("seriesNumber") ?: ""
         val passedCustomer = intent.getSerializableExtra("customerModel") as? CustomerModel
@@ -118,6 +131,52 @@ class CustomerDetailsActivity : BaseActivity() {
         btnShareWhatsapp = findViewById(R.id.btnShareWhatsapp)
         btnViewHistory = findViewById(R.id.btnViewHistory)
         btnCreateComplaint = findViewById(R.id.btnCreateComplaint)
+
+        rowEditDelete = findViewById(R.id.rowEditDelete)
+        btnEditCustomer = findViewById(R.id.btnEditCustomer)
+        btnDeleteCustomer = findViewById(R.id.btnDeleteCustomer)
+    }
+
+    private fun setupEditDelete() {
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE
+        rowEditDelete.visibility = if (role == Roles.ADMIN) View.VISIBLE else View.GONE
+
+        btnEditCustomer.setOnClickListener {
+            val customer = currentCustomer ?: return@setOnClickListener
+            val intent = Intent(this, NewCustomerActivity::class.java).apply {
+                putExtra("customerModel", customer)
+            }
+            startActivity(intent)
+        }
+
+        btnDeleteCustomer.setOnClickListener {
+            val customer = currentCustomer ?: return@setOnClickListener
+            AlertDialog.Builder(this)
+                .setTitle(R.string.delete_customer_title)
+                .setMessage(getString(R.string.delete_customer_message, customer.name))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    lifecycleScope.launch {
+                        val success = repository.deleteCustomer(customer.id)
+                        if (success) {
+                            val prefs = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+                            auditLogRepository.logAction(
+                                actorUsername = prefs.getString("username", "") ?: "",
+                                actorRole = prefs.getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE,
+                                action = AuditAction.DELETE_CUSTOMER,
+                                targetType = AuditTargetType.CUSTOMER,
+                                targetId = customer.id,
+                                targetName = customer.name
+                            )
+                            Toast.makeText(this@CustomerDetailsActivity, getString(R.string.customer_deleted_successfully), Toast.LENGTH_SHORT).show()
+                            finish()
+                        } else {
+                            Toast.makeText(this@CustomerDetailsActivity, getString(R.string.error_prefix, "unknown"), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+                .show()
+        }
     }
 
     private fun setupListeners() {

@@ -27,6 +27,8 @@ class SettingsActivity : BaseActivity() {
     private lateinit var btnLangTe: TextView
     private lateinit var cardTeamSection: MaterialCardView
     private lateinit var btnManageEmployees: MaterialButton
+    private lateinit var cardAuditSection: MaterialCardView
+    private lateinit var btnViewAuditLog: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,7 @@ class SettingsActivity : BaseActivity() {
         bindViews()
         bindAccountSection()
         bindTeamSection()
+        bindAuditSection()
         bindAppearanceSection()
         bindLanguageSection()
         bindAboutSection()
@@ -55,6 +58,8 @@ class SettingsActivity : BaseActivity() {
         btnLangTe = findViewById(R.id.btnLangTe)
         cardTeamSection = findViewById(R.id.cardTeamSection)
         btnManageEmployees = findViewById(R.id.btnManageEmployees)
+        cardAuditSection = findViewById(R.id.cardAuditSection)
+        btnViewAuditLog = findViewById(R.id.btnViewAuditLog)
     }
 
     private fun bindAccountSection() {
@@ -83,6 +88,15 @@ class SettingsActivity : BaseActivity() {
 
         btnManageEmployees.setOnClickListener {
             startActivity(Intent(this, EmployeeListActivity::class.java))
+        }
+    }
+
+    private fun bindAuditSection() {
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE).getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE
+        cardAuditSection.visibility = if (role == Roles.ADMIN) View.VISIBLE else View.GONE
+
+        btnViewAuditLog.setOnClickListener {
+            startActivity(Intent(this, AuditLogActivity::class.java))
         }
     }
 

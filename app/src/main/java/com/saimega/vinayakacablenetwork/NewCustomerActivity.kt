@@ -4,17 +4,21 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class NewCustomerActivity : BaseActivity() {
 
     // ── Firestore ─────────────────────────────────────────────────────────────
     private lateinit var db: FirebaseFirestore
+    private val customerRepository = CustomerRepository()
+    private val auditLogRepository = AuditLogRepository()
 
     // ── Input fields ──────────────────────────────────────────────────────────
     private lateinit var tilFullName: TextInputLayout
@@ -31,6 +35,9 @@ class NewCustomerActivity : BaseActivity() {
     private lateinit var btnSaveCustomer: MaterialButton
     private lateinit var progressBar: LinearProgressIndicator
 
+    // ── Edit mode ─────────────────────────────────────────────────────────────
+    private var editingCustomer: CustomerModel? = null
+
     // ─────────────────────────────────────────────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +52,7 @@ class NewCustomerActivity : BaseActivity() {
         setContentView(R.layout.activity_new_customer)
 
         db = FirebaseFirestore.getInstance()
+        editingCustomer = intent.getSerializableExtra("customerModel") as? CustomerModel
 
         // Toolbar with back navigation
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
@@ -66,10 +74,26 @@ class NewCustomerActivity : BaseActivity() {
         btnSaveCustomer = findViewById(R.id.btnSaveCustomer)
         progressBar     = findViewById(R.id.progressBar)
 
+        editingCustomer?.let { customer ->
+            toolbar.title = getString(R.string.edit_customer)
+            btnSaveCustomer.text = getString(R.string.update_customer)
+            etFullName.setText(customer.name)
+            etSeriesNumber.setText(customer.id)
+            etPhoneNumber.setText(customer.phone)
+            etBaseAmount.setText(if (customer.baseAmount > 0) customer.baseAmount.toString() else "")
+            // Series number is the Firestore document ID — changing it here would
+            // orphan the existing document instead of renaming it, so it's locked.
+            etSeriesNumber.isEnabled = false
+        }
+
         // Save click
         btnSaveCustomer.setOnClickListener {
             if (validateForm()) {
-                saveCustomerToFirebase()
+                if (editingCustomer != null) {
+                    updateCustomerInFirebase()
+                } else {
+                    saveCustomerToFirebase()
+                }
             }
         }
     }
@@ -174,6 +198,39 @@ class NewCustomerActivity : BaseActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+    }
+
+    /**
+     * Updates the identity/billing-input fields of an existing customer.
+     * Never touches payment/status fields — see [CustomerRepository.updateCustomer].
+     */
+    private fun updateCustomerInFirebase() {
+        val customer = editingCustomer ?: return
+        setLoadingState(true)
+
+        val name = etFullName.text?.toString()?.trim().orEmpty()
+        val phone = etPhoneNumber.text?.toString()?.trim().orEmpty()
+        val baseAmount = etBaseAmount.text?.toString()?.trim()?.toDoubleOrNull() ?: 0.0
+
+        lifecycleScope.launch {
+            val success = customerRepository.updateCustomer(customer.id, name, phone, baseAmount)
+            setLoadingState(false)
+            if (success) {
+                val prefs = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+                auditLogRepository.logAction(
+                    actorUsername = prefs.getString("username", "") ?: "",
+                    actorRole = prefs.getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE,
+                    action = AuditAction.EDIT_CUSTOMER,
+                    targetType = AuditTargetType.CUSTOMER,
+                    targetId = customer.id,
+                    targetName = name
+                )
+                Toast.makeText(this@NewCustomerActivity, getString(R.string.customer_updated_successfully), Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Toast.makeText(this@NewCustomerActivity, getString(R.string.error_prefix, "unknown"), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════════════

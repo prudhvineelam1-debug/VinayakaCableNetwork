@@ -98,6 +98,11 @@
             android:name=".EmployeeListActivity"
             android:exported="false" />
 
+        <!-- AUDIT LOG (ADMIN only) -->
+        <activity
+            android:name=".AuditLogActivity"
+            android:exported="false" />
+
         <!-- DATA IMPORT -->
         <activity
             android:name=".DataImportActivity"

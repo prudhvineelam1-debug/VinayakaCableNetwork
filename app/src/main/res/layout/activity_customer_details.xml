@@ -96,6 +96,38 @@
                         android:textColor="#FFFFFF"
                         app:chipBackgroundColor="@color/accent_blue"
                         app:chipStrokeWidth="0dp" />
+
+                    <LinearLayout
+                        android:id="@+id/rowEditDelete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditCustomer"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/edit"
+                            app:icon="@android:drawable/ic_menu_edit" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDeleteCustomer"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/accent_red"
+                            app:strokeColor="@color/accent_red"
+                            android:text="@string/delete"
+                            app:icon="@android:drawable/ic_menu_delete"
+                            app:iconTint="@color/accent_red" />
+
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

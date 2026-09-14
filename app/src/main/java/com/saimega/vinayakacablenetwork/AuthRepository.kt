@@ -160,4 +160,13 @@ class AuthRepository {
             false
         }
     }
+
+    suspend fun deleteUser(username: String): Boolean {
+        return try {
+            db.collection("users").document(username.trim().lowercase()).delete().await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

@@ -442,4 +442,30 @@ class CustomerRepository {
         }
         batch.commit().await()
     }
+
+    /**
+     * Updates only the editable identity/billing-input fields of an existing
+     * customer. Deliberately uses `update`, not `set` — a full-replace `set`
+     * would wipe billing state (pendingAmount, status, lastPaidMonth, etc.)
+     * that this edit form never touches.
+     */
+    suspend fun updateCustomer(id: String, name: String, phone: String, baseAmount: Double): Boolean {
+        return try {
+            db.collection("customers").document(id)
+                .update(mapOf("name" to name, "phone" to phone, "baseAmount" to baseAmount))
+                .await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun deleteCustomer(id: String): Boolean {
+        return try {
+            db.collection("customers").document(id).delete().await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

@@ -22,6 +22,7 @@ class EmployeeListActivity : BaseActivity() {
     private lateinit var employeeListContainer: LinearLayout
     private lateinit var btnAddEmployee: MaterialButton
     private val authRepository = AuthRepository()
+    private val auditLogRepository = AuditLogRepository()
     private var currentUsername: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,10 +91,11 @@ class EmployeeListActivity : BaseActivity() {
             tvSelfGuardNote.visibility = View.VISIBLE
         }
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle(R.string.edit_employee)
             .setView(dialogView)
             .setNegativeButton(R.string.cancel, null)
+            .setNeutralButton(R.string.delete, null)
             .setPositiveButton(R.string.save) { _, _ ->
                 val newRole = actvRole.text.toString().ifBlank { employee.role }
                 val newActive = if (isSelf) true else switchActive.isChecked
@@ -101,12 +103,50 @@ class EmployeeListActivity : BaseActivity() {
                 lifecycleScope.launch {
                     val success = authRepository.updateUserRoleAndActive(employee.username, newRole, newActive)
                     if (success) {
+                        logEmployeeAudit(AuditAction.EDIT_EMPLOYEE, employee.username, employee.name)
                         Toast.makeText(this@EmployeeListActivity, getString(R.string.employee_updated_successfully), Toast.LENGTH_SHORT).show()
                         loadEmployees()
                     }
                 }
             }
             .show()
+
+        if (isSelf) {
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).visibility = View.GONE
+        } else {
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+                dialog.dismiss()
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.delete_employee_title)
+                    .setMessage(getString(R.string.delete_employee_message, employee.name))
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.delete) { _, _ ->
+                        lifecycleScope.launch {
+                            val success = authRepository.deleteUser(employee.username)
+                            if (success) {
+                                logEmployeeAudit(AuditAction.DELETE_EMPLOYEE, employee.username, employee.name)
+                                Toast.makeText(this@EmployeeListActivity, getString(R.string.employee_deleted_successfully), Toast.LENGTH_SHORT).show()
+                                loadEmployees()
+                            } else {
+                                Toast.makeText(this@EmployeeListActivity, getString(R.string.error_prefix, "unknown"), Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                    .show()
+            }
+        }
+    }
+
+    private suspend fun logEmployeeAudit(action: String, targetUsername: String, targetName: String) {
+        val prefs = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+        auditLogRepository.logAction(
+            actorUsername = prefs.getString("username", "") ?: "",
+            actorRole = prefs.getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE,
+            action = action,
+            targetType = AuditTargetType.EMPLOYEE,
+            targetId = targetUsername,
+            targetName = targetName
+        )
     }
 
     private fun showAddEmployeeDialog() {

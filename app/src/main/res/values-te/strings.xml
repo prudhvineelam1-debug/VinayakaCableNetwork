@@ -222,4 +222,23 @@
     <string name="no_permission_message">ఈ స్క్రీన్‌ను యాక్సెస్ చేయడానికి మీకు అనుమతి లేదు</string>
     <string name="status_active">యాక్టివ్</string>
     <string name="status_inactive">ఇన్యాక్టివ్</string>
+    <string name="edit">సవరించు</string>
+    <string name="delete">తొలగించు</string>
+    <string name="edit_customer">కస్టమర్‌ను సవరించండి</string>
+    <string name="update_customer">కస్టమర్‌ను నవీకరించండి</string>
+    <string name="customer_updated_successfully">కస్టమర్ విజయవంతంగా నవీకరించబడ్డారు</string>
+    <string name="delete_customer_title">కస్టమర్‌ను తొలగించాలా?</string>
+    <string name="delete_customer_message">ఇది %1$s మరియు వారి బిల్లింగ్ డేటా మొత్తాన్ని శాశ్వతంగా తొలగిస్తుంది. దీన్ని రద్దు చేయలేరు.</string>
+    <string name="customer_deleted_successfully">కస్టమర్ విజయవంతంగా తొలగించబడ్డారు</string>
+    <string name="delete_employee_title">ఉద్యోగిని తొలగించాలా?</string>
+    <string name="delete_employee_message">ఇది %1$s ఖాతాను శాశ్వతంగా తొలగిస్తుంది. దీన్ని రద్దు చేయలేరు.</string>
+    <string name="employee_deleted_successfully">ఉద్యోగి విజయవంతంగా తొలగించబడ్డారు</string>
+    <string name="audit_section">ఆడిట్</string>
+    <string name="view_audit_log">ఆడిట్ లాగ్ చూడండి</string>
+    <string name="audit_log_title">ఆడిట్ లాగ్</string>
+    <string name="clear_all">అన్నీ క్లియర్ చేయండి</string>
+    <string name="clear_audit_log_title">ఆడిట్ లాగ్‌ను క్లియర్ చేయాలా?</string>
+    <string name="clear_audit_log_message">ఇది అన్ని ఆడిట్ లాగ్ ఎంట్రీలను శాశ్వతంగా తొలగిస్తుంది. దీన్ని రద్దు చేయలేరు.</string>
+    <string name="audit_log_cleared">ఆడిట్ లాగ్ క్లియర్ చేయబడింది</string>
+    <string name="no_audit_entries">ఇంకా ఆడిట్ ఎంట్రీలు లేవు</string>
 </resources>
