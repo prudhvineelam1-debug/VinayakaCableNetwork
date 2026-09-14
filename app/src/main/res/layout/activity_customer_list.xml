@@ -71,7 +71,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Search Customer"
+                    android:text="@string/search_customer_label"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface"/>
@@ -79,7 +79,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Enter customer ID or mobile number"
+                    android:text="@string/search_customer_subtitle"
                     android:textSize="13sp"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:layout_marginTop="4dp"/>
@@ -109,7 +109,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:background="@null"
-                        android:hint="Enter ID / Phone"
+                        android:hint="@string/search_customer_hint"
                         android:textColorHint="?attr/colorOnSurfaceVariant"
                         android:textColor="?attr/colorOnSurface"
                         android:textSize="14sp"

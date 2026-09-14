@@ -134,7 +134,7 @@
 
     <string name="download_pdf">Download PDF</string>
     <string name="export_csv">Export CSV</string>
-    <string name="search_customer_hint">Enter a Customer ID or Phone Number to search</string>
+    <string name="search_customer_hint">Enter name / Series No.</string>
 
     <string name="register_customer">Register Customer</string>
     <string name="register_customer_desc">Fill in the details below to add a new customer to the network.</string>
@@ -227,6 +227,8 @@
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="title_search_customers">Search Customers</string>
+    <string name="search_customer_label">Search Customer</string>
+    <string name="search_customer_subtitle">Enter customer name or service number</string>
     <string name="title_add_new_customer">Add New Customer</string>
     <string name="search">Search</string>
 
