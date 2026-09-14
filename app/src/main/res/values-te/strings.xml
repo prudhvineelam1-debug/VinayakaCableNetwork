@@ -57,8 +57,8 @@
     <string name="billing_summary_section">బిల్లింగ్ సారాంశం</string>
     <string name="box_number_label">బాక్స్ నంబర్</string>
     <string name="business_name_caps">వినాయక కేబుల్ నెట్‌వర్క్</string>
-    <string name="cash_amount">నగదు: ₹%1$s</string>
     <string name="cash_label">నగదు</string>
+    <string name="mode_amount_format">%1$s: ₹%2$s</string>
     <string name="collected_month">ఈ నెల వసూలు చేయబడింది</string>
     <string name="collected_today">ఈ రోజు వసూలు చేయబడింది</string>
     <string name="collection_summary">వసూళ్ల సారాంశం</string>
@@ -182,7 +182,6 @@
     <string name="total_collected_today">ఈ రోజు మొత్తం వసూలు</string>
     <string name="total_paid">మొత్తం చెల్లించారు</string>
     <string name="unpaid_caps">చెల్లించలేదు</string>
-    <string name="upi_amount">UPI / ఆన్‌లైన్: ₹%1$s</string>
     <string name="vc_number_label">VC నంబర్</string>
     <string name="view_receipt">వీక్షించండి</string>
     <string name="view_share_receipt">రసీదు వీక్షించండి / షేర్ చేయండి</string>

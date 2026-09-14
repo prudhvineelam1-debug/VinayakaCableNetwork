@@ -165,22 +165,12 @@
                         android:textSize="14sp"
                         android:layout_marginBottom="4dp" />
 
-                    <TextView
-                        android:id="@+id/tvCash"
+                    <!-- One row per payment mode present in this report's data -->
+                    <LinearLayout
+                        android:id="@+id/modeBreakdownContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/cash_amount"
-                        android:textSize="14sp"
-                        android:textColor="#1976D2"
-                        android:layout_marginBottom="4dp" />
-
-                    <TextView
-                        android:id="@+id/tvUPI"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/upi_amount"
-                        android:textSize="14sp"
-                        android:textColor="#D32F2F" />
+                        android:orientation="vertical" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

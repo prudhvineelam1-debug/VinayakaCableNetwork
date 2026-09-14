@@ -42,8 +42,7 @@ class ReportActivity : BaseActivity() {
     private lateinit var tvReportTitle : TextView
     private lateinit var tvTotal       : TextView
     private lateinit var tvCount       : TextView
-    private lateinit var tvCash        : TextView
-    private lateinit var tvUPI         : TextView
+    private lateinit var modeBreakdownContainer: android.widget.LinearLayout
     private lateinit var tvEmpty       : TextView
     private lateinit var progressBar   : ProgressBar
     private lateinit var recyclerReport: RecyclerView
@@ -72,10 +71,12 @@ class ReportActivity : BaseActivity() {
     // the "No adapter attached; skipping layout" RecyclerView warning.
     private lateinit var reportAdapter: ReportAdapter
 
-    // Summary totals — computed once after fetch, reused in exports
+    // Summary totals — computed once after fetch, reused in exports.
+    // modeTotals maps each distinct paymentMode string (e.g. "Cash", "PhonePe")
+    // to its collected total, so the breakdown covers every mode actually used
+    // rather than a hardcoded cash-vs-everything-else split.
     private var grandTotal = 0.0
-    private var cashTotal  = 0.0
-    private var upiTotal   = 0.0
+    private var modeTotals = linkedMapOf<String, Double>()
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,8 +92,7 @@ class ReportActivity : BaseActivity() {
         tvReportTitle  = findViewById(R.id.tvReportTitle)
         tvTotal        = findViewById(R.id.tvTotal)
         tvCount        = findViewById(R.id.tvCount)
-        tvCash         = findViewById(R.id.tvCash)
-        tvUPI          = findViewById(R.id.tvUPI)
+        modeBreakdownContainer = findViewById(R.id.modeBreakdownContainer)
         tvEmpty        = findViewById(R.id.tvEmpty)
         progressBar    = findViewById(R.id.progressBarReport)
         recyclerReport = findViewById(R.id.recyclerReport)
@@ -189,13 +189,14 @@ class ReportActivity : BaseActivity() {
                 }
 
                 // Compute summary totals
-                grandTotal = 0.0; cashTotal = 0.0; upiTotal = 0.0
+                grandTotal = 0.0
+                modeTotals = linkedMapOf()
                 paymentList.clear()
 
                 for (p in payments) {
                     grandTotal += p.paid
-                    if (p.paymentMode.equals("Cash", ignoreCase = true)) cashTotal += p.paid
-                    else upiTotal += p.paid
+                    val modeKey = p.paymentMode.ifBlank { "Other" }
+                    modeTotals[modeKey] = (modeTotals[modeKey] ?: 0.0) + p.paid
                     paymentList.add(p)
                 }
 
@@ -225,8 +226,7 @@ class ReportActivity : BaseActivity() {
         updateSummaryUI(
             totalAmount  = grandTotal,
             paymentCount = paymentList.size,
-            cashAmount   = cashTotal,
-            upiAmount    = upiTotal
+            modeTotals   = modeTotals
         )
 
         tvEmpty.visibility        = if (paymentList.isEmpty()) View.VISIBLE else View.GONE
@@ -238,36 +238,40 @@ class ReportActivity : BaseActivity() {
     }
 
     /**
-     * Updates the four summary TextViews at the top of the screen.
-     *
-     * @param totalAmount   Grand total collected (₹)
-     * @param paymentCount  Number of payment transactions
-     * @param cashAmount    Cash sub-total (₹)
-     * @param upiAmount     UPI / Online sub-total (₹)
+     * Updates the summary card: total, count, and one row per payment mode
+     * actually present in this report's data (Cash, PhonePe, Google Pay,
+     * Paytm, UPI, or any other value stored on a payment), sorted highest
+     * amount first. A mode with zero payments in this period is simply
+     * absent — no empty rows.
      *
      * Monetary values are formatted with the Indian numbering system
      * (en_IN locale) so ₹100000 renders as ₹1,00,000.
-     * String resources supply the label text so the UI respects the
-     * active language (English / Telugu).
      */
     private fun updateSummaryUI(
         totalAmount : Double,
         paymentCount: Int,
-        cashAmount  : Double,
-        upiAmount   : Double
+        modeTotals  : Map<String, Double>
     ) {
         // inrFormat uses Locale("en", "IN") — defined at class level.
         val fmtTotal = inrFormat.format(totalAmount.toLong())
-        val fmtCash  = inrFormat.format(cashAmount.toLong())
-        val fmtUpi   = inrFormat.format(upiAmount.toLong())
 
-        // getString() injects the formatted value into the %1$s / %1$d placeholders
-        // defined in res/values/strings.xml, keeping hardcoded strings out of Kotlin.
         tvTotal.text = getString(R.string.total_collected, fmtTotal)
         tvCount.text = getString(R.string.payments_count,  paymentCount)
-        tvCash.text  = getString(R.string.cash_amount,     fmtCash)
-        tvUPI.text   = getString(R.string.upi_amount,      fmtUpi)
+
+        modeBreakdownContainer.removeAllViews()
+        for ((modeName, amount) in modeTotals.entries.sortedByDescending { it.value }) {
+            val row = TextView(this).apply {
+                text = getString(R.string.mode_amount_format, modeName, inrFormat.format(amount.toLong()))
+                textSize = 14f
+                setTextColor(android.graphics.Color.parseColor("#1976D2"))
+                setPadding(0, 0, 0, dpToPx(4))
+            }
+            modeBreakdownContainer.addView(row)
+        }
     }
+
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
 
     private fun setLoading(on: Boolean) {
         progressBar.visibility    = if (on) View.VISIBLE else View.GONE
@@ -289,7 +293,7 @@ class ReportActivity : BaseActivity() {
                 w.println("Vinayaka Cable Network")
                 w.println("${tvReportTitle.text}")
                 w.println("Total Collected: ₹${grandTotal.toLong()}")
-                w.println("Cash: ₹${cashTotal.toLong()},UPI / Online: ₹${upiTotal.toLong()}")
+                w.println(modeTotals.entries.joinToString(",") { (name, amount) -> "$name: ₹${amount.toLong()}" })
                 w.println("Payments: ${paymentList.size}")
                 w.println()
 
@@ -383,7 +387,8 @@ class ReportActivity : BaseActivity() {
             cv.drawText(line2, (PW - pText.measureText(line2)) / 2f, MG + 30f, pText)
 
             pText.isFakeBoldText = true; pText.textSize = 11f; pText.color = GREEN
-            val line3 = "Total Collected: ₹${grandTotal.toLong()}   |   Cash: ₹${cashTotal.toLong()}   |   UPI: ₹${upiTotal.toLong()}   |   Payments: ${paymentList.size}"
+            val modeSummary = modeTotals.entries.joinToString("   |   ") { (name, amount) -> "$name: ₹${amount.toLong()}" }
+            val line3 = "Total Collected: ₹${grandTotal.toLong()}   |   $modeSummary   |   Payments: ${paymentList.size}"
             cv.drawText(line3, (PW - pText.measureText(line3)) / 2f, MG + 48f, pText)
         }
 

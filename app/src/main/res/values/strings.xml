@@ -180,8 +180,7 @@
     <string name="day_report">Day Report</string>
     <string name="total_collected">Total Collected: ₹%1$s</string>
     <string name="payments_count">Payments: %1$d</string>
-    <string name="cash_amount">Cash: ₹%1$s</string>
-    <string name="upi_amount">UPI / Online: ₹%1$s</string>
+    <string name="mode_amount_format">%1$s: ₹%2$s</string>
     <string name="no_payments_found">No payments found for this period.</string>
 
     <string name="no_data_export">No data to export</string>
