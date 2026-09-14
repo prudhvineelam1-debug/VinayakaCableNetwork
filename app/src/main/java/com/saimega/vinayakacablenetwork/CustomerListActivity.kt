@@ -90,37 +90,27 @@ class CustomerListActivity : BaseActivity() {
         val chipUnpaid = findViewById<com.google.android.material.chip.Chip>(R.id.chipUnpaid)
         val chipPaid   = findViewById<com.google.android.material.chip.Chip>(R.id.chipPaid)
 
-        // ── Contextual chip visibility + initial checked state ─────────────────────
+        // ── Contextual chip visibility ───────────────────────────────────────
+        // Arriving with a specific status (from a dashboard stat card) shows a
+        // browsable list already scoped to that status — a single non-interactive
+        // chip repeating that back added nothing, so the whole picker is hidden.
+        // Only "all" gives the user a real choice between statuses, so only
+        // there do the chips appear.
         when (type) {
-            "paid" -> {
-                chipPaid.isChecked      = true
-                chipAll.visibility      = View.GONE
-                chipUnpaid.visibility   = View.GONE
-                chipPaid.visibility     = View.VISIBLE
-                btnDownloadPdfBar.visibility = View.VISIBLE
-            }
-            "unpaid" -> {
-                chipUnpaid.isChecked    = true
-                chipAll.visibility      = View.GONE
-                chipPaid.visibility     = View.GONE
-                chipUnpaid.visibility   = View.VISIBLE
-                btnDownloadPdfBar.visibility = View.VISIBLE
-            }
-            "partial" -> {
-                chipAll.visibility     = View.GONE
-                chipUnpaid.visibility  = View.GONE
-                chipPaid.visibility    = View.GONE
+            "paid", "unpaid", "partial" -> {
+                chipGroupStatus.visibility = View.GONE
                 btnDownloadPdfBar.visibility = View.VISIBLE
             }
             else -> {
-                // ALL: show all chips
                 chipAll.isChecked       = true
+                chipGroupStatus.visibility = View.VISIBLE
                 chipAll.visibility      = View.VISIBLE
                 chipUnpaid.visibility   = View.VISIBLE
                 chipPaid.visibility     = View.VISIBLE
                 btnDownloadPdfBar.visibility = View.GONE
             }
         }
+        adapter.setStatusFilter(type)
 
         chipGroupStatus.setOnCheckedStateChangeListener { _, checkedIds ->
             if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
@@ -132,7 +122,7 @@ class CustomerListActivity : BaseActivity() {
             if (type != newType) {
                 type = newType
                 btnDownload.text = getString(R.string.download_type_pdf, type.replaceFirstChar { it.uppercase() })
-                viewModel.updateFilter(type)
+                updateResultVisibility(adapter.setStatusFilter(type))
             }
         }
 
@@ -157,7 +147,7 @@ class CustomerListActivity : BaseActivity() {
         }
 
         // Kick off the first data load + attach real-time listener
-        viewModel.init(type)
+        viewModel.init()
     }
 
     override fun onResume() {
@@ -240,8 +230,9 @@ class CustomerListActivity : BaseActivity() {
         }
     }
 
-    // Convenience for PDF/CSV — current filtered snapshot
-    private val list get() = viewModel.customers.value ?: emptyList()
+    // Convenience for PDF/CSV — exports exactly what's currently displayed
+    // (status filter + any active search query), not the unfiltered full list.
+    private val list get() = adapter.currentList
 
     // ── PDF Export ────────────────────────────────────────────────────────────
     private fun generatePDF() {

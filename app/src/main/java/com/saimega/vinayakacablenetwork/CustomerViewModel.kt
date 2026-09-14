@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Source
 
 /**
  * CustomerViewModel
@@ -41,19 +40,18 @@ class CustomerViewModel : ViewModel() {
     val error: LiveData<String?> = _error
 
     // ── Private state ─────────────────────────────────────────────────────────
-    private var currentStatus = "unpaid"
     private var snapshotListener: ListenerRegistration? = null
 
     // ── Public API ────────────────────────────────────────────────────────────
 
     /**
-     * Call once from Activity.onCreate.
-     * Attaches a real-time Firestore snapshot listener filtered by [status].
-     * Any Firestore document change (e.g. status flipped to "paid") will push a
-     * fresh list to [customers] automatically.
+     * Call once from Activity.onCreate. Attaches a real-time Firestore snapshot
+     * listener over the full customers collection — status/search filtering is
+     * the adapter's job now (see CustomerAdapter.setStatusFilter/filter), so a
+     * search box always has every customer to search, regardless of whatever
+     * status filter the screen was opened with.
      */
-    fun init(status: String) {
-        currentStatus = status.lowercase()
+    fun init() {
         attachSnapshotListener()
     }
 
@@ -62,15 +60,6 @@ class CustomerViewModel : ViewModel() {
      * For normal use, the snapshot listener handles updates automatically.
      */
     fun refresh() {
-        detachSnapshotListener()
-        attachSnapshotListener()
-    }
-
-    /**
-     * Updates the status filter dynamically from the UI (e.g. filter chips)
-     */
-    fun updateFilter(status: String) {
-        currentStatus = status.lowercase()
         detachSnapshotListener()
         attachSnapshotListener()
     }
@@ -85,15 +74,7 @@ class CustomerViewModel : ViewModel() {
 
         _isLoading.value = true
 
-        // Build the query: filter by the status field that submitPayment writes ("paid"/"unpaid").
-        // Firestore real-time listener — fires immediately with current data, then on every change.
-        val query = if (currentStatus == "paid") {
-            db.collection("customers").whereEqualTo("status", "paid")
-        } else {
-            db.collection("customers")
-        }
-
-        snapshotListener = query.addSnapshotListener { snapshot, error ->
+        snapshotListener = db.collection("customers").addSnapshotListener { snapshot, error ->
             _isLoading.value = false
 
             if (error != null) {
@@ -107,18 +88,7 @@ class CustomerViewModel : ViewModel() {
                 try { mapDocToCustomer(doc) } catch (e: Exception) { null }
             }
 
-            // Client-side status filter with total visibility for unpaid collection
-            val filtered = when (currentStatus.lowercase()) {
-                "paid"    -> allDocs.filter { it.status.equals("paid", true) }
-                "partial" -> allDocs.filter { it.status.equals("partial", true) }
-                "unpaid"  -> allDocs.filter { it.status.equals("unpaid", true) }
-                "active"  -> allDocs.filter { it.connectionStatus.equals("active", true) }
-                "inactive"-> allDocs.filter { it.connectionStatus.equals("deactivated", true) }
-                else      -> allDocs // "all"
-            }
-
-            // Sort alphabetically by name
-            _customers.value = filtered.sortedBy { it.name }
+            _customers.value = allDocs.sortedBy { it.name }
         }
     }
 

@@ -175,22 +175,42 @@ class CustomerAdapter(
         return applyFilter(query)
     }
 
+    /**
+     * Sets the status filter (paid/unpaid/partial/all) applied when there is
+     * no active search query. Returns the resulting item count.
+     */
+    fun setStatusFilter(status: String): Int {
+        statusFilter = status.lowercase()
+        return applyFilter(currentQuery)
+    }
+
     private var currentQuery = ""
+    private var statusFilter = "all"
 
     private fun applyFilter(query: String): Int {
-        val filtered = if (query.isBlank()) {
-            fullList
+        val result = if (query.isBlank()) {
+            // No active search — browse the status-filtered list (e.g. "Paid" from a stat card).
+            val byStatus = when (statusFilter) {
+                "paid" -> fullList.filter { it.status.equals("paid", true) }
+                "unpaid" -> fullList.filter { it.status.equals("unpaid", true) }
+                "partial" -> fullList.filter { it.status.equals("partial", true) }
+                else -> fullList
+            }
+            byStatus.sortedBy { it.name.lowercase() }
         } else {
+            // Active search always searches every customer, regardless of the
+            // status filter — typing a name/series number that belongs to a
+            // different status than the current filter must still find it.
             val lower = query.lowercase()
             fullList.filter { c ->
                 c.name.lowercase().contains(lower) ||
                 c.id.lowercase().contains(lower)
-            }
-        }.sortedWith(
-            compareByDescending<CustomerModel> { it.name.lowercase().startsWith(query.lowercase()) }
-                .thenBy { it.name.lowercase() }
-        )
-        submitList(filtered)
-        return filtered.size
+            }.sortedWith(
+                compareByDescending<CustomerModel> { it.name.lowercase().startsWith(lower) }
+                    .thenBy { it.name.lowercase() }
+            )
+        }
+        submitList(result)
+        return result.size
     }
 }
