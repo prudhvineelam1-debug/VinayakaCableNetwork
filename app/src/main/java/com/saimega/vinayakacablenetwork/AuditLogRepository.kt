@@ -10,11 +10,13 @@ object AuditAction {
     const val DELETE_CUSTOMER = "DELETE_CUSTOMER"
     const val EDIT_EMPLOYEE = "EDIT_EMPLOYEE"
     const val DELETE_EMPLOYEE = "DELETE_EMPLOYEE"
+    const val EDIT_PAYMENT = "EDIT_PAYMENT"
 }
 
 object AuditTargetType {
     const val CUSTOMER = "CUSTOMER"
     const val EMPLOYEE = "EMPLOYEE"
+    const val PAYMENT = "PAYMENT"
 }
 
 class AuditLogRepository {

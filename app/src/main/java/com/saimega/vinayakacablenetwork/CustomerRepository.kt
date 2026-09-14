@@ -194,7 +194,68 @@ class CustomerRepository {
         }
     }
 
+    /**
+     * Corrects an already-recorded payment's amount/mode/reference number.
+     *
+     * Adjusts the customer's pendingAmount by exactly the delta between the
+     * old and new amount, and recomputes status using the SAME rule
+     * submitPayment uses (paid/partial iff the payment's own month still
+     * equals the customer's lastPaidMonth, unpaid otherwise) — lastPaidMonth
+     * itself is deliberately left untouched. This means an edit that revokes
+     * an "advance credit" (a payment that was large enough to mark a future
+     * month paid) will correctly fix pendingAmount/status for the payment's
+     * own month, but cannot claw back that future month's credit — the
+     * payment record doesn't retain enough history to safely reverse that.
+     */
+    suspend fun editPayment(paymentId: String, newAmount: Double, newMode: String, newNumber: String): Boolean {
+        return try {
+            val paymentRef = db.collection("payments").document(paymentId)
+            db.runTransaction { transaction ->
+                val paymentSnapshot = transaction.get(paymentRef)
+                if (!paymentSnapshot.exists()) {
+                    throw IllegalStateException("Payment $paymentId not found")
+                }
 
+                val customerId = paymentSnapshot.getString("customerId") ?: ""
+                val oldPaid = (paymentSnapshot.get("paid") as? Number)?.toDouble() ?: 0.0
+                val total = (paymentSnapshot.get("total") as? Number)?.toDouble() ?: 0.0
+                // The payment's own month ("yyyy-MM"), from its "yyyy-MM-dd" date —
+                // this is the month being corrected, not necessarily the current month.
+                val paymentMonthKey = (paymentSnapshot.getString("date") ?: "").take(7)
+
+                val customerRef = db.collection("customers").document(customerId)
+                val customerSnapshot = transaction.get(customerRef)
+                val currentPending = (customerSnapshot.get("pendingAmount") as? Number)?.toDouble() ?: 0.0
+                val lastPaidMonth = customerSnapshot.getString("lastPaidMonth") ?: ""
+
+                val delta = newAmount - oldPaid
+                val newPending = (currentPending - delta).coerceAtLeast(0.0)
+
+                val status = if (lastPaidMonth == paymentMonthKey) {
+                    if (newPending == 0.0) "paid" else "partial"
+                } else {
+                    "unpaid"
+                }
+
+                transaction.update(customerRef, mapOf(
+                    "pendingAmount" to newPending,
+                    "status" to status,
+                    "paymentStatus" to status.replaceFirstChar { it.uppercase() }
+                ))
+
+                transaction.update(paymentRef, mapOf(
+                    "paid" to newAmount,
+                    "remaining" to (total - newAmount),
+                    "paymentMode" to newMode,
+                    "paymentNumber" to newNumber
+                ))
+                null
+            }.await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     // =========================
     // MONTHLY BILL GENERATION

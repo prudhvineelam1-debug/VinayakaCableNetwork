@@ -37,7 +37,7 @@ class TodayCollectionActivity : BaseActivity() {
         rvTransactions = findViewById(R.id.rvTransactions)
 
         rvTransactions.layoutManager = LinearLayoutManager(this)
-        adapter = PaymentHistoryAdapter(emptyList()) { _, _ ->
+        adapter = PaymentHistoryAdapter(emptyList(), canEdit = false) { _, _ ->
             // Open payment details if needed
         }
         rvTransactions.adapter = adapter

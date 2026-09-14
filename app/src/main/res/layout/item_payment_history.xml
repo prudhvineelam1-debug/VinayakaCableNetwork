@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
+            android:weightSum="4"
             android:background="#FAFAFA">
 
             <com.google.android.material.button.MaterialButton
@@ -101,8 +101,20 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/view_receipt"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:icon="@android:drawable/ic_menu_view"
+                app:iconSize="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEdit"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/edit"
+                android:textSize="11sp"
+                android:visibility="gone"
+                app:icon="@android:drawable/ic_menu_edit"
                 app:iconSize="16dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -112,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/print"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:icon="@drawable/ic_print"
                 app:iconSize="16dp" />
 
@@ -123,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/share"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:icon="@android:drawable/ic_menu_share"
                 app:iconSize="16dp" />
 

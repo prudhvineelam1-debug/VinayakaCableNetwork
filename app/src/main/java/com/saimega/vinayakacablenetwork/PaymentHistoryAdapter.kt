@@ -10,6 +10,7 @@ import com.google.android.material.button.MaterialButton
 
 class PaymentHistoryAdapter(
     private var list: List<PaymentModel>,
+    private val canEdit: Boolean,
     private val onActionClick: (paymentId: String, action: String) -> Unit
 ) : RecyclerView.Adapter<PaymentHistoryAdapter.ViewHolder>() {
 
@@ -24,6 +25,7 @@ class PaymentHistoryAdapter(
         val tvStatus: TextView = view.findViewById(R.id.tvStatus)
         val tvAmount: TextView = view.findViewById(R.id.tvAmount)
         val btnView: MaterialButton  = view.findViewById(R.id.btnView)
+        val btnEdit: MaterialButton  = view.findViewById(R.id.btnEdit)
         val btnPrint: MaterialButton = view.findViewById(R.id.btnPrint)
         val btnShare: MaterialButton = view.findViewById(R.id.btnShare)
     }
@@ -62,7 +64,10 @@ class PaymentHistoryAdapter(
             holder.tvStatus.setBackgroundColor(Color.parseColor("#FFEBEE"))
         }
 
+        holder.btnEdit.visibility = if (canEdit) View.VISIBLE else View.GONE
+
         holder.btnView.setOnClickListener { onActionClick(p.paymentId, "VIEW") }
+        holder.btnEdit.setOnClickListener { onActionClick(p.paymentId, "EDIT") }
         holder.btnPrint.setOnClickListener { onActionClick(p.paymentId, "PRINT") }
         holder.btnShare.setOnClickListener { onActionClick(p.paymentId, "SHARE") }
     }

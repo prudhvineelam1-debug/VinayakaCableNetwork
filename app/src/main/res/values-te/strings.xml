@@ -220,6 +220,9 @@
     <string name="status_active">యాక్టివ్</string>
     <string name="status_inactive">ఇన్యాక్టివ్</string>
     <string name="edit">సవరించు</string>
+    <string name="edit_payment_title">చెల్లింపును సవరించండి</string>
+    <string name="payment_number_label">చెల్లింపు నంబర్</string>
+    <string name="payment_updated_successfully">చెల్లింపు విజయవంతంగా నవీకరించబడింది</string>
     <string name="delete">తొలగించు</string>
     <string name="edit_customer">కస్టమర్‌ను సవరించండి</string>
     <string name="update_customer">కస్టమర్‌ను నవీకరించండి</string>

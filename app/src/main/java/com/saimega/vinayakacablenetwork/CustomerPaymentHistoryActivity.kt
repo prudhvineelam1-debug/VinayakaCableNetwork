@@ -2,12 +2,17 @@ package com.saimega.vinayakacablenetwork
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +37,7 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
     private lateinit var pbLoadingMore: ProgressBar
     private lateinit var layoutEmpty: LinearLayout
     private lateinit var cardSummary: MaterialCardView
-    
+
     private lateinit var btnFilter: ImageButton
     private lateinit var chipClearFilter: Chip
     private lateinit var tvTotalPaid: TextView
@@ -40,7 +45,10 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
     private lateinit var tvLastDate: TextView
 
     private val db = FirebaseFirestore.getInstance()
+    private val customerRepository = CustomerRepository()
+    private val auditLogRepository = AuditLogRepository()
     private var customerId: String = ""
+    private var canEditPayments = false
 
     // Pagination & Filtering state
     private var filterStartDate: Long? = null
@@ -60,6 +68,9 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
             finish()
             return
         }
+
+        canEditPayments = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+            .getString("user_role", Roles.EMPLOYEE) == Roles.ADMIN
 
         rvHistory = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
@@ -82,13 +93,18 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         rvHistory.layoutManager = layoutManager
-        adapter = PaymentHistoryAdapter(emptyList()) { paymentId, action ->
-            val intent = Intent(this, ReceiptActivity::class.java).apply {
-                putExtra("CUSTOMER_ID", customerId)
-                putExtra("PAYMENT_ID", paymentId)
-                putExtra("ACTION", action)
+        adapter = PaymentHistoryAdapter(emptyList(), canEditPayments) { paymentId, action ->
+            if (action == "EDIT") {
+                val payment = paymentList.find { it.paymentId == paymentId }
+                if (payment != null) showEditPaymentDialog(payment)
+            } else {
+                val intent = Intent(this, ReceiptActivity::class.java).apply {
+                    putExtra("CUSTOMER_ID", customerId)
+                    putExtra("PAYMENT_ID", paymentId)
+                    putExtra("ACTION", action)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
         rvHistory.adapter = adapter
 
@@ -135,6 +151,56 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
             chipClearFilter.visibility = View.GONE
             resetAndFetch()
         }
+    }
+
+    private fun showEditPaymentDialog(payment: PaymentModel) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_payment, null)
+        val etAmount = dialogView.findViewById<EditText>(R.id.etEditAmount)
+        val actvMode = dialogView.findViewById<AutoCompleteTextView>(R.id.actvEditMode)
+        val etNumber = dialogView.findViewById<EditText>(R.id.etEditNumber)
+
+        val modes = listOf("Cash", "PhonePe", "Google Pay", "Paytm", "UPI")
+        actvMode.setAdapter(ArrayAdapter(this, android.R.layout.simple_list_item_1, modes))
+        actvMode.setOnClickListener { actvMode.showDropDown() }
+
+        etAmount.setText(if (payment.paid == payment.paid.toLong().toDouble()) payment.paid.toLong().toString() else payment.paid.toString())
+        actvMode.setText(payment.paymentMode, false)
+        etNumber.setText(payment.paymentNumber)
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.edit_payment_title)
+            .setView(dialogView)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newAmount = etAmount.text.toString().trim().toDoubleOrNull()
+                if (newAmount == null || newAmount < 0) {
+                    Toast.makeText(this, getString(R.string.enter_a_valid_amount), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                val newMode = actvMode.text.toString().ifBlank { payment.paymentMode }
+                val newNumber = etNumber.text.toString().trim()
+
+                lifecycleScope.launch {
+                    val success = customerRepository.editPayment(payment.paymentId, newAmount, newMode, newNumber)
+                    if (success) {
+                        val prefs = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+                        auditLogRepository.logAction(
+                            actorUsername = prefs.getString("username", "") ?: "",
+                            actorRole = prefs.getString("user_role", Roles.EMPLOYEE) ?: Roles.EMPLOYEE,
+                            action = AuditAction.EDIT_PAYMENT,
+                            targetType = AuditTargetType.PAYMENT,
+                            targetId = payment.paymentId,
+                            targetName = payment.name,
+                            details = "₹${payment.paid} → ₹$newAmount"
+                        )
+                        Toast.makeText(this@CustomerPaymentHistoryActivity, getString(R.string.payment_updated_successfully), Toast.LENGTH_SHORT).show()
+                        resetAndFetch()
+                    } else {
+                        Toast.makeText(this@CustomerPaymentHistoryActivity, getString(R.string.error_prefix, "unknown"), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            .show()
     }
 
     private fun resetAndFetch() {
