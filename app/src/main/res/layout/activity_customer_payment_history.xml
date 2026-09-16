@@ -17,17 +17,6 @@
             android:layout_height="56dp"
             android:background="?attr/colorPrimary">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/payment_history"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="#FFFFFF"
-                android:letterSpacing="0.02" />
-
             <ImageButton
                 android:id="@+id/btnFilter"
                 android:layout_width="56dp"
@@ -36,6 +25,22 @@
                 android:src="@android:drawable/ic_menu_recent_history"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/btnFilter"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/payment_history"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#FFFFFF"
+                android:letterSpacing="0.02"
+                android:singleLine="true"
+                android:ellipsize="end" />
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -164,7 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
-                android:text="Clear Date Filter"
+                android:text="@string/clear_date_filter_label"
                 app:closeIconVisible="true"
                 android:visibility="gone" />
 

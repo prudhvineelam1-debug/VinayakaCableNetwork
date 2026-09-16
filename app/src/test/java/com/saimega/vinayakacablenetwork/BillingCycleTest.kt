@@ -81,4 +81,59 @@ class BillingCycleTest {
 
         assertEquals(1, updates.size)
     }
+
+    // ── Grace-period connection status ──────────────────────────────────────
+
+    @Test
+    fun `day 5 stays active if paid last month even though unpaid this month`() {
+        val result = BillingCycle.computeConnectionStatus(
+            currentDay = 5, lastPaidMonth = "2026-08", currentMonth = "2026-09", lastMonth = "2026-08"
+        )
+        assertEquals("unpaid", result.status)
+        assertEquals("active", result.connectionStatus)
+    }
+
+    @Test
+    fun `day 5 stays active if already paid this month`() {
+        val result = BillingCycle.computeConnectionStatus(
+            currentDay = 5, lastPaidMonth = "2026-09", currentMonth = "2026-09", lastMonth = "2026-08"
+        )
+        assertEquals("paid", result.status)
+        assertEquals("active", result.connectionStatus)
+    }
+
+    @Test
+    fun `day 5 deactivates if unpaid for both this month and last month`() {
+        val result = BillingCycle.computeConnectionStatus(
+            currentDay = 5, lastPaidMonth = "2026-07", currentMonth = "2026-09", lastMonth = "2026-08"
+        )
+        assertEquals("unpaid", result.status)
+        assertEquals("deactivated", result.connectionStatus)
+    }
+
+    @Test
+    fun `day 11 deactivates even if paid last month but not this month`() {
+        val result = BillingCycle.computeConnectionStatus(
+            currentDay = 11, lastPaidMonth = "2026-08", currentMonth = "2026-09", lastMonth = "2026-08"
+        )
+        assertEquals("unpaid", result.status)
+        assertEquals("deactivated", result.connectionStatus)
+    }
+
+    @Test
+    fun `day 11 stays active if paid this month`() {
+        val result = BillingCycle.computeConnectionStatus(
+            currentDay = 11, lastPaidMonth = "2026-09", currentMonth = "2026-09", lastMonth = "2026-08"
+        )
+        assertEquals("paid", result.status)
+        assertEquals("active", result.connectionStatus)
+    }
+
+    @Test
+    fun `day 10 is the last day the grace window applies`() {
+        val result = BillingCycle.computeConnectionStatus(
+            currentDay = 10, lastPaidMonth = "2026-08", currentMonth = "2026-09", lastMonth = "2026-08"
+        )
+        assertEquals("active", result.connectionStatus)
+    }
 }

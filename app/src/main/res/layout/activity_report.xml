@@ -9,7 +9,10 @@
     <!-- ══════════════════════ HEADER BAR ══════════════════════ -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp"
         android:text="@string/financial_report"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -35,6 +38,7 @@
 
             <!-- ══════════ MODE SELECTOR ROW ══════════ -->
             <LinearLayout
+                android:id="@+id/rowMonthlyFilter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -55,6 +59,7 @@
 
             <!-- ══════════ DATE RANGE ROW ══════════ -->
             <LinearLayout
+                android:id="@+id/rowDateRangeFilter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

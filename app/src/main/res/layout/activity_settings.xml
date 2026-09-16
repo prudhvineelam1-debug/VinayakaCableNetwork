@@ -204,7 +204,7 @@
                             android:layout_weight="1"
                             android:padding="12dp"
                             android:gravity="center"
-                            android:text="🌙 Dark"
+                            android:text="@string/theme_dark_label"
                             android:textColor="@color/dashboard_text_secondary" />
 
                         <TextView
@@ -214,7 +214,7 @@
                             android:layout_weight="1"
                             android:padding="12dp"
                             android:gravity="center"
-                            android:text="☀️ Light"
+                            android:text="@string/theme_light_label"
                             android:textColor="@color/dashboard_text_secondary" />
 
                     </LinearLayout>

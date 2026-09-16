@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="@string/profile_label"
             android:textColor="@color/dashboard_text_primary"
             android:textSize="16sp" />
     </LinearLayout>
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Settings"
+            android:text="@string/settings"
             android:textColor="@color/dashboard_text_primary"
             android:textSize="16sp" />
     </LinearLayout>
@@ -81,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logout"
+            android:text="@string/logout"
             android:textColor="#EF4444"
             android:textSize="16sp" />
     </LinearLayout>

@@ -14,17 +14,22 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Import Customers"
+            app:title="@string/import_customers_title"
             app:navigationIcon="?attr/homeAsUpIndicator" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:gravity="center"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:gravity="center">
 
         <ImageView
             android:layout_width="120dp"
@@ -36,7 +41,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bulk Data Import"
+            android:text="@string/bulk_data_import_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="?attr/colorOnBackground"
@@ -45,7 +50,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Paste your customer data list here or upload an Excel file to sync with Firebase."
+            android:text="@string/bulk_import_subtitle"
             android:textAlignment="center"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginTop="8dp"
@@ -55,7 +60,7 @@
             android:id="@+id/btnPasteData"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Paste Data from Clipboard"
+            android:text="@string/paste_data_label"
             app:cornerRadius="16dp"
             app:icon="@android:drawable/ic_menu_edit"
             app:backgroundTint="#4F46E5"
@@ -66,7 +71,7 @@
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Upload Excel / CSV File"
+            android:text="@string/upload_excel_label"
             app:cornerRadius="16dp"
             app:icon="@android:drawable/ic_menu_upload"
             android:layout_marginBottom="16dp" />
@@ -80,5 +85,7 @@
             android:layout_marginTop="16dp" />
 
     </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

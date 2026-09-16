@@ -74,17 +74,18 @@ class CustomerAdapter(
                     binding.tvAmount.text = if (item.baseAmount > 0) "₹${item.baseAmount.toInt()}" else "₹0"
                 }
                 "partial" -> {
-                    binding.tvStatus.text = "PARTIAL"
+                    binding.tvStatus.text = binding.root.context.getString(R.string.partial_caps)
                     binding.tvStatus.setTextColor(Color.WHITE)
                     binding.tvStatus.backgroundTintList =
                         ColorStateList.valueOf(Color.parseColor("#F57C00")) // orange
                     
-                    val totalDue = item.baseAmount + item.pendingAmount + item.extraCharges + item.previousDue
+                    // DC Rule: pendingAmount is already the full outstanding bill — don't re-add baseAmount.
+                    val totalDue = item.pendingAmount
                     binding.tvAmount.visibility = android.view.View.VISIBLE
-                    binding.tvAmount.text = "Due: ₹${totalDue.toInt()}"
-                    
+                    binding.tvAmount.text = binding.root.context.getString(R.string.due_amount_format, totalDue.toInt())
+
                     binding.tvAmountBreakdown.visibility = android.view.View.VISIBLE
-                    binding.tvAmountBreakdown.text = "₹${item.pendingAmount.toInt()} pending"
+                    binding.tvAmountBreakdown.text = binding.root.context.getString(R.string.pending_amount_format, item.pendingAmount.toInt())
                 }
                 else -> {
                     // unpaid
@@ -93,12 +94,13 @@ class CustomerAdapter(
                     binding.tvStatus.backgroundTintList =
                         ColorStateList.valueOf(Color.parseColor("#C62828")) // red
                     
-                    val totalDue = item.baseAmount + item.pendingAmount + item.extraCharges + item.previousDue
+                    // DC Rule: pendingAmount is already the full outstanding bill — don't re-add baseAmount.
+                    val totalDue = item.pendingAmount
                     binding.tvAmount.visibility = android.view.View.VISIBLE
-                    binding.tvAmount.text = "Total Due: ₹${totalDue.toInt()}"
-                    
+                    binding.tvAmount.text = binding.root.context.getString(R.string.total_due_amount_format, totalDue.toInt())
+
                     binding.tvAmountBreakdown.visibility = android.view.View.VISIBLE
-                    binding.tvAmountBreakdown.text = "₹${item.baseAmount.toInt()} current + ₹${item.pendingAmount.toInt()} pending"
+                    binding.tvAmountBreakdown.text = binding.root.context.getString(R.string.pending_amount_format, item.pendingAmount.toInt())
                 }
             }
 

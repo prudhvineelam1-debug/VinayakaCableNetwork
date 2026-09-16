@@ -327,6 +327,55 @@ class CustomerRepository {
     }
 
     /**
+     * Grace-period connection-status sweep: deactivates customers who haven't
+     * paid within their grace window, and (re)marks each customer's "status"
+     * paid/unpaid for the current month based on lastPaidMonth.
+     *
+     * Grace rule: 1st–10th of the month, a customer stays active if they paid
+     * last month OR this month; from the 11th on, active requires having paid
+     * this month.
+     *
+     * Idempotent per calendar day via meta/billing.lastStatusCheckDate — safe
+     * to call from anywhere (e.g. dashboard onResume) without re-scanning/
+     * rewriting every customer on every call.
+     */
+    suspend fun refreshConnectionStatuses(): Int {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val metaRef = db.collection("meta").document("billing")
+        val metaSnap = metaRef.get(Source.SERVER).await()
+        if (metaSnap.getString("lastStatusCheckDate") == today) {
+            return 0
+        }
+
+        val cal = Calendar.getInstance()
+        val currentDay = cal.get(Calendar.DAY_OF_MONTH)
+        val sdf = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val currentMonth = sdf.format(cal.time)
+        val calLast = Calendar.getInstance().apply { add(Calendar.MONTH, -1) }
+        val lastMonth = sdf.format(calLast.time)
+
+        val snapshot = db.collection("customers").get(Source.SERVER).await()
+
+        var updatedCount = 0
+        snapshot.documents.chunked(500).forEach { chunk ->
+            val batch = db.batch()
+            for (doc in chunk) {
+                val lastPaid = doc.getString("lastPaidMonth") ?: ""
+                val update = BillingCycle.computeConnectionStatus(currentDay, lastPaid, currentMonth, lastMonth)
+                batch.update(doc.reference, mapOf(
+                    "status" to update.status,
+                    "Connection Status" to update.connectionStatus
+                ))
+                updatedCount++
+            }
+            batch.commit().await()
+        }
+
+        metaRef.set(mapOf("lastStatusCheckDate" to today), SetOptions.merge()).await()
+        return updatedCount
+    }
+
+    /**
      * Rebuilds a billing document for the given customer and month from the
      * source‑of‑truth payments collection. Used for recovery when a billing doc
      * is missing or corrupted.

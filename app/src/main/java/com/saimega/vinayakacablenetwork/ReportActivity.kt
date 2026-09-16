@@ -83,8 +83,27 @@ class ReportActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report)
         bindViews()
+        restrictNonAdminToCurrentMonth()
         setupButtons()
         loadReport()
+    }
+
+    /**
+     * Non-admin roles (collectors/technicians) may only ever see the current
+     * month's report — the month/date-range pickers that would let them
+     * navigate elsewhere are hidden entirely rather than shown disabled.
+     */
+    private fun restrictNonAdminToCurrentMonth() {
+        val role = getSharedPreferences("vinayaka_prefs", MODE_PRIVATE)
+            .getString("user_role", Roles.ADMIN) ?: Roles.ADMIN
+        if (role == Roles.ADMIN) return
+
+        findViewById<View>(R.id.rowMonthlyFilter).visibility = View.GONE
+        findViewById<View>(R.id.rowDateRangeFilter).visibility = View.GONE
+
+        mode = "month"
+        reportMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+        reportYear = Calendar.getInstance().get(Calendar.YEAR)
     }
 
     // ── View binding ──────────────────────────────────────────────────────────
@@ -120,10 +139,10 @@ class ReportActivity : BaseActivity() {
         btnEndDate.setOnClickListener   { mode = "day"; showDatePicker(isStart = false) }
 
         btnExcel.setOnClickListener {
-            if (paymentList.isEmpty()) toast("No data to export") else exportCSV()
+            if (paymentList.isEmpty()) toast(getString(R.string.no_data_export)) else exportCSV()
         }
         btnPdf.setOnClickListener {
-            if (paymentList.isEmpty()) toast("No data to export") else exportPDF()
+            if (paymentList.isEmpty()) toast(getString(R.string.no_data_export)) else exportPDF()
         }
     }
 
@@ -137,7 +156,7 @@ class ReportActivity : BaseActivity() {
             if (isStart) {
                 startDateStr = picked
             } else {
-                if (picked < startDateStr) { toast("End date cannot be before start date"); return@DatePickerDialog }
+                if (picked < startDateStr) { toast(getString(R.string.end_date_before_start_error)); return@DatePickerDialog }
                 endDateStr = picked
             }
             updateButtonLabels()
@@ -146,13 +165,12 @@ class ReportActivity : BaseActivity() {
     }
 
     private fun showMonthYearPicker() {
-        val months = arrayOf("January","February","March","April","May","June",
-                             "July","August","September","October","November","December")
+        val months = java.text.DateFormatSymbols(Locale.getDefault()).months.filter { it.isNotEmpty() }
         val items = mutableListOf<String>()
         for (y in 2020..2030) for (mn in months) items.add("$mn $y")
 
         android.app.AlertDialog.Builder(this)
-            .setTitle("Select Month & Year")
+            .setTitle(getString(R.string.select_month_year_title))
             .setItems(items.toTypedArray()) { _, which ->
                 reportYear  = 2020 + which / 12
                 reportMonth = which % 12 + 1
@@ -203,7 +221,7 @@ class ReportActivity : BaseActivity() {
                 renderUI()
 
             } catch (e: Exception) {
-                toast("Query error: ${e.message}")
+                toast(getString(R.string.query_error_prefix, e.message))
             } finally {
                 setLoading(false)
             }
@@ -312,10 +330,10 @@ class ReportActivity : BaseActivity() {
             }
 
             shareFile(file, "text/csv")
-            toast("CSV saved to Downloads")
+            toast(getString(R.string.csv_saved_in_downloads))
 
         } catch (e: Exception) {
-            toast("CSV Error: ${e.message}")
+            toast(getString(R.string.csv_error_prefix, e.message))
         }
     }
 
@@ -486,9 +504,9 @@ class ReportActivity : BaseActivity() {
             val file = File(dir, "Report_${mode}_$tag.pdf")
             pdf.writeTo(FileOutputStream(file)); pdf.close()
             shareFile(file, "application/pdf")
-            toast("PDF saved to Downloads")
+            toast(getString(R.string.pdf_saved_in_downloads))
         } catch (e: Exception) {
-            pdf.close(); toast("PDF Error: ${e.message}")
+            pdf.close(); toast(getString(R.string.pdf_error_prefix, e.message))
         }
     }
 

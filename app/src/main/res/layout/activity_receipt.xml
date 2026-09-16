@@ -367,7 +367,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginBottom="8dp"
-            android:text="Bluetooth Print (Thermal)"
+            android:text="@string/bluetooth_print_label"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textAllCaps="false"

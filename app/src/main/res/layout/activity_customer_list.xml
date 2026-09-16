@@ -21,6 +21,7 @@
             android:background="@android:color/transparent"
             app:title="@string/title_search_customers"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+            app:titleMarginEnd="60dp"
             app:navigationIcon="?attr/homeAsUpIndicator">
 
             <!-- Profile Avatar inside Toolbar aligned to end -->
@@ -120,7 +121,7 @@
                         android:id="@+id/btnSearch"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
-                        android:text="Search"
+                        android:text="@string/search"
                         android:textAllCaps="false"
                         app:cornerRadius="22dp"
                         android:backgroundTint="#2962FF"
@@ -149,7 +150,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="All Customers"
+                            android:text="@string/all_customers_chip"
                             android:checked="true"
                             app:chipIcon="@drawable/ic_group"
                             app:chipIconVisible="true"/>
@@ -159,7 +160,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Unpaid"
+                            android:text="@string/unpaid_label"
                             app:chipIcon="@drawable/ic_unpaid_red"
                             app:chipIconVisible="true"/>
 
@@ -168,7 +169,7 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Paid"
+                            android:text="@string/paid_label"
                             app:chipIcon="@drawable/ic_paid_green"
                             app:chipIconVisible="true"/>
                     </com.google.android.material.chip.ChipGroup>
@@ -230,16 +231,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Find Customer"
+                android:text="@string/find_customer_title"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:textColor="?attr/colorOnBackground" />
 
             <TextView
-                android:layout_width="280dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Search using customer ID or registered mobile number to view details."
+                android:text="@string/find_customer_subtitle"
                 android:textAlignment="center"
                 android:textSize="14sp"
                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -265,14 +266,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tip"
+                        android:text="@string/tip_label"
                         android:textColor="#2962FF"
                         android:textStyle="bold"
                         android:textSize="14sp"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Use exact phone number for faster results."
+                        android:text="@string/tip_phone_hint"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp"/>
                 </LinearLayout>
@@ -301,7 +302,7 @@
         android:layout_height="64dp"
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
-        android:text="Download PDF"
+        android:text="@string/download_pdf"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"

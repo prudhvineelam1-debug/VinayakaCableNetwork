@@ -64,7 +64,7 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
 
         customerId = intent.getStringExtra("CUSTOMER_ID") ?: ""
         if (customerId.isEmpty()) {
-            Toast.makeText(this, "Customer ID missing", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.customer_id_missing), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -138,7 +138,7 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
                 chipClearFilter.visibility = View.VISIBLE
                 val startStr = android.text.format.DateFormat.format("dd MMM yy", filterStartDate!!)
                 val endStr = android.text.format.DateFormat.format("dd MMM yy", filterEndDate!!)
-                chipClearFilter.text = "Filtered: $startStr - $endStr"
+                chipClearFilter.text = getString(R.string.filtered_range_format, startStr, endStr)
                 
                 resetAndFetch()
             }
@@ -308,12 +308,12 @@ class CustomerPaymentHistoryActivity : BaseActivity() {
                     
                     // Update Last Date only on the first page
                     if (paymentList.size == snapshot.size()) {
-                        tvLastDate.text = paymentList.first().date.ifEmpty { "N/A" }
+                        tvLastDate.text = paymentList.first().date.ifEmpty { getString(R.string.not_available) }
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this@CustomerPaymentHistoryActivity, "Error loading data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CustomerPaymentHistoryActivity, getString(R.string.error_loading_data), Toast.LENGTH_SHORT).show()
             } finally {
                 isLoadingMore = false
                 progressBar.visibility = View.GONE

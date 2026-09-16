@@ -170,14 +170,26 @@ class SettingsActivity : BaseActivity() {
         styleToggleButton(btnLangEn, currentLang == "en")
         styleToggleButton(btnLangTe, currentLang == "te")
 
-        btnLangEn.setOnClickListener {
-            LocaleHelper.setLocale(this, "en")
-            recreate()
-        }
-        btnLangTe.setOnClickListener {
-            LocaleHelper.setLocale(this, "te")
-            recreate()
-        }
+        btnLangEn.setOnClickListener { switchLanguage("en") }
+        btnLangTe.setOnClickListener { switchLanguage("te") }
+    }
+
+    /**
+     * Switching language must affect every screen, not just this one — but
+     * recreate() only rebuilds the current activity, leaving any activity
+     * still on the back stack (e.g. Dashboard underneath Settings) rendering
+     * in the stale locale until it's separately destroyed and recreated.
+     * Instead, drop the whole back stack and relaunch fresh from Dashboard,
+     * the same way BaseActivity's forced-logout does — every activity from
+     * here on is created new, so all of them pick up the new locale via
+     * attachBaseContext() -> LocaleHelper.onAttach().
+     */
+    private fun switchLanguage(language: String) {
+        LocaleHelper.setLocale(this, language)
+        val intent = Intent(this, DashboardActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 
     private fun styleToggleButton(button: TextView, selected: Boolean) {

@@ -237,7 +237,7 @@ class CustomerListActivity : BaseActivity() {
     // ── PDF Export ────────────────────────────────────────────────────────────
     private fun generatePDF() {
         // ── UI feedback: show "Generating" immediately ──────────────────────
-        Toast.makeText(this, "Generating PDF…", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.generating_pdf), Toast.LENGTH_SHORT).show()
 
         val dataList = list
 
@@ -407,11 +407,12 @@ class CustomerListActivity : BaseActivity() {
                 canvas.drawText(c.id, colSeriesX, baseline, centredPaint)
 
                 // DC Rule: for paid list show plan charge; for unpaid show exact pendingAmount from Firestore
+                // (pendingAmount is already the full outstanding bill — don't re-add baseAmount).
                 val isPaidStatus = c.status.equals("paid", ignoreCase = true)
                 val displayAmount = if (isPaidStatus) {
                     c.baseAmount
                 } else {
-                    c.baseAmount + c.pendingAmount + c.extraCharges + c.previousDue
+                    c.pendingAmount
                 }
                 canvas.drawText("₹${displayAmount.toInt()}", colAmountX, baseline, centredPaint)
                 grandTotal += displayAmount
@@ -456,7 +457,7 @@ class CustomerListActivity : BaseActivity() {
             pdf.writeTo(FileOutputStream(file))
             pdf.close()
 
-            Toast.makeText(this, "PDF saved successfully", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.pdf_saved_successfully), Toast.LENGTH_LONG).show()
 
             val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -494,11 +495,12 @@ class CustomerListActivity : BaseActivity() {
             var grandTotal = 0.0
             for (c in dataList) {
                 // DC Rule: always use pendingAmount — the authoritative Firestore value
+                // (it already is the full outstanding bill — don't re-add baseAmount).
                 val isPaidStatus = c.status.equals("paid", true)
                 val amount = if (isPaidStatus) {
                     c.baseAmount
                 } else {
-                    c.baseAmount + c.pendingAmount + c.extraCharges + c.previousDue
+                    c.pendingAmount
                 }
                 grandTotal += amount
                 val statusStr   = if (isPaidStatus) "Paid" else "Unpaid"

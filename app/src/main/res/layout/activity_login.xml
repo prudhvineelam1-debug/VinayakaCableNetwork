@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="CableManager Pro"
+            android:text="@string/app_product_name"
             android:textColor="@color/cm_text_primary"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Sai Cable Network — Billing &amp; Collection"
+            android:text="@string/login_tagline"
             android:textColor="@color/cm_text_tertiary"
             android:textSize="12sp"
             android:gravity="center" />
@@ -65,7 +65,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username"
+                android:text="@string/hint_username"
                 android:textColor="@color/cm_text_secondary"
                 android:textSize="11.5sp"
                 android:textStyle="bold"
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Password"
+                android:text="@string/hint_password"
                 android:textColor="@color/cm_text_secondary"
                 android:textSize="11.5sp"
                 android:textStyle="bold"
@@ -167,7 +167,7 @@
                     android:id="@+id/cbRememberMe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Remember me"
+                    android:text="@string/remember_me_label"
                     android:textColor="@color/cm_text_secondary"
                     android:textSize="12.5sp"
                     android:buttonTint="@color/cm_blue" />
@@ -181,7 +181,7 @@
                     android:id="@+id/tvForgotPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Forgot password?"
+                    android:text="@string/forgot_password_label"
                     android:textColor="@color/cm_blue"
                     android:textSize="12.5sp"
                     android:clickable="true"
@@ -208,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="14dp"
-                android:text="CableManager Pro v2.0 — Sai Cable Network"
+                android:text="@string/login_footer"
                 android:textColor="@color/cm_text_tertiary"
                 android:textSize="10.5sp" />
         </LinearLayout>
@@ -224,7 +224,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Need help? "
+                android:text="@string/need_help_label"
                 android:textColor="@color/cm_text_tertiary"
                 android:textSize="12.5sp" />
 
@@ -232,7 +232,7 @@
                 android:id="@+id/tvContactSupport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Contact support"
+                android:text="@string/contact_support_label"
                 android:textColor="@color/cm_blue"
                 android:textSize="12.5sp"
                 android:clickable="true"

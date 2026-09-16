@@ -51,15 +51,15 @@ class PaymentHistoryAdapter(
 
         // Amount
         val amountStr = if (p.paid == p.paid.toLong().toDouble()) p.paid.toLong().toString() else String.format("%.2f", p.paid)
-        holder.tvAmount.text = "₹ $amountStr"
+        holder.tvAmount.text = holder.tvAmount.context.getString(R.string.rupee_value, amountStr)
 
         // Status
         if (p.remaining <= 0) {
-            holder.tvStatus.text = "Paid Fully"
+            holder.tvStatus.text = holder.tvStatus.context.getString(R.string.paid_fully_label)
             holder.tvStatus.setTextColor(Color.parseColor("#2E7D32"))
             holder.tvStatus.setBackgroundColor(Color.parseColor("#E8F5E9"))
         } else {
-            holder.tvStatus.text = "Partial (Due: ₹${p.remaining})"
+            holder.tvStatus.text = holder.tvStatus.context.getString(R.string.partial_due_format, p.remaining.toString())
             holder.tvStatus.setTextColor(Color.parseColor("#C62828"))
             holder.tvStatus.setBackgroundColor(Color.parseColor("#FFEBEE"))
         }

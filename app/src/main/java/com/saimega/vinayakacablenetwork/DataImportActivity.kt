@@ -38,7 +38,7 @@ class DataImportActivity : BaseActivity() {
         val text = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
 
         if (text.isEmpty()) {
-            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.clipboard_empty), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -74,10 +74,10 @@ class DataImportActivity : BaseActivity() {
             if (customers.isNotEmpty()) {
                 importToFirebase(customers)
             } else {
-                Toast.makeText(this, "No valid customer data found in clipboard", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.no_valid_customer_data), Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Error parsing data: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_parsing_data, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -88,10 +88,10 @@ class DataImportActivity : BaseActivity() {
         lifecycleScope.launch {
             try {
                 repository.importCustomerBatch(list)
-                Toast.makeText(this@DataImportActivity, "Successfully imported ${list.size} customers", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@DataImportActivity, getString(R.string.import_success_format, list.size), Toast.LENGTH_LONG).show()
                 finish()
             } catch (e: Exception) {
-                Toast.makeText(this@DataImportActivity, "Import failed: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@DataImportActivity, getString(R.string.import_failed_prefix, e.message), Toast.LENGTH_LONG).show()
             } finally {
                 progressBar.visibility = View.GONE
                 btnPaste.isEnabled = true

@@ -18,6 +18,12 @@ data class BilledCustomerUpdate(
     val newPendingAmount: Double
 )
 
+/** Result of the grace-period sweep: a customer's payment status and connection status for today. */
+data class ConnectionStatusUpdate(
+    val status: String,
+    val connectionStatus: String
+)
+
 object BillingCycle {
 
     /**
@@ -29,5 +35,27 @@ object BillingCycle {
         return customers
             .filter { it.connectionStatus.equals("active", ignoreCase = true) }
             .map { BilledCustomerUpdate(id = it.id, newPendingAmount = it.pendingAmount + it.monthlyCharge) }
+    }
+
+    /**
+     * Grace-period rule: 1st–10th of the month, a customer stays active if
+     * they paid last month or this month; from the 11th on, active requires
+     * having paid this month. monthKey format is "yyyy-MM".
+     */
+    fun computeConnectionStatus(
+        currentDay: Int,
+        lastPaidMonth: String,
+        currentMonth: String,
+        lastMonth: String
+    ): ConnectionStatusUpdate {
+        val isPaidThisMonth = lastPaidMonth == currentMonth
+        val isPaidLastMonth = lastPaidMonth == lastMonth
+        val status = if (isPaidThisMonth) "paid" else "unpaid"
+        val connectionStatus = if (currentDay <= 10) {
+            if (isPaidLastMonth || isPaidThisMonth) "active" else "deactivated"
+        } else {
+            if (isPaidThisMonth) "active" else "deactivated"
+        }
+        return ConnectionStatusUpdate(status, connectionStatus)
     }
 }

@@ -70,8 +70,8 @@ class AuditLogActivity : BaseActivity() {
         tvEmptyState.visibility = if (entries.isEmpty()) View.VISIBLE else View.GONE
         for (entry in entries) {
             val row = LayoutInflater.from(this).inflate(R.layout.item_audit_log_row, auditListContainer, false)
-            row.findViewById<TextView>(R.id.tvAuditAction).text = "${entry.action} · ${entry.targetName}"
-            row.findViewById<TextView>(R.id.tvAuditActor).text = "by ${entry.actorUsername} (${entry.actorRole})"
+            row.findViewById<TextView>(R.id.tvAuditAction).text = getString(R.string.audit_action_format, entry.action, entry.targetName)
+            row.findViewById<TextView>(R.id.tvAuditActor).text = getString(R.string.audit_actor_format, entry.actorUsername, entry.actorRole)
             row.findViewById<TextView>(R.id.tvAuditTimestamp).text = dateFormat.format(Date(entry.timestamp))
             row.findViewById<View>(R.id.btnDeleteEntry).setOnClickListener {
                 lifecycleScope.launch {

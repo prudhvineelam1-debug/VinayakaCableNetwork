@@ -78,16 +78,6 @@
             android:name=".DashboardActivity"
             android:exported="false" />
 
-        <!-- COLLECTOR DASHBOARD -->
-        <activity
-            android:name=".CollectorDashboardActivity"
-            android:exported="false" />
-
-        <!-- COMPLAINT MANAGEMENT -->
-        <activity
-            android:name=".ComplaintActivity"
-            android:exported="false" />
-
         <!-- SETTINGS -->
         <activity
             android:name=".SettingsActivity"

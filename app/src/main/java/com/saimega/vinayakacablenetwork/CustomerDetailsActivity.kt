@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -52,7 +51,6 @@ class CustomerDetailsActivity : BaseActivity() {
     private lateinit var btnDownloadInvoice: Button
     private lateinit var btnShareWhatsapp: Button
     private lateinit var btnViewHistory: Button
-    private lateinit var btnCreateComplaint: Button
 
     private lateinit var rowEditDelete: View
     private lateinit var btnEditCustomer: Button
@@ -74,6 +72,7 @@ class CustomerDetailsActivity : BaseActivity() {
         setupPaymentMode()
         setupListeners()
         setupEditDelete()
+        applyImeInsetPadding()
 
         val series = intent.getStringExtra("seriesNumber") ?: ""
         val passedCustomer = intent.getSerializableExtra("customerModel") as? CustomerModel
@@ -110,13 +109,13 @@ class CustomerDetailsActivity : BaseActivity() {
         tvChangeAmount = rowChange.findViewById(R.id.rowValue)
 
         // Set Labels
-        rowBaseAmount.findViewById<TextView>(R.id.rowLabel).text = "Base Plan"
-        rowPendingBill.findViewById<TextView>(R.id.rowLabel).text = "Arrears"
-        rowExtraCharges.findViewById<TextView>(R.id.rowLabel).text = "Extra Charges"
-        rowTotal.findViewById<TextView>(R.id.rowLabel).text = "Total Payable"
-        rowRemaining.findViewById<TextView>(R.id.rowLabel).text = "Remaining"
-        rowPaidFully.findViewById<TextView>(R.id.rowLabel).text = "Status"
-        rowChange.findViewById<TextView>(R.id.rowLabel).text = "Return Change"
+        rowBaseAmount.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.base_plan_label)
+        rowPendingBill.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.arrears_label)
+        rowExtraCharges.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.extra_charges_label)
+        rowTotal.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.total_payable_label)
+        rowRemaining.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.remaining_label)
+        rowPaidFully.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.status_label)
+        rowChange.findViewById<TextView>(R.id.rowLabel).text = getString(R.string.return_change_label)
 
         etManualAmount = findViewById(R.id.etManualAmount)
         etAmountPaid = findViewById(R.id.etAmountPaid)
@@ -130,7 +129,6 @@ class CustomerDetailsActivity : BaseActivity() {
         btnDownloadInvoice = findViewById(R.id.btnDownloadInvoice)
         btnShareWhatsapp = findViewById(R.id.btnShareWhatsapp)
         btnViewHistory = findViewById(R.id.btnViewHistory)
-        btnCreateComplaint = findViewById(R.id.btnCreateComplaint)
 
         rowEditDelete = findViewById(R.id.rowEditDelete)
         btnEditCustomer = findViewById(R.id.btnEditCustomer)
@@ -227,10 +225,6 @@ class CustomerDetailsActivity : BaseActivity() {
             intent.putExtra("CUSTOMER_ID", currentCustomer?.id)
             startActivity(intent)
         }
-
-        btnCreateComplaint.setOnClickListener {
-            currentCustomer?.let { showCreateComplaintDialog(it) }
-        }
     }
 
     private fun fetchCustomer(series: String) {
@@ -246,7 +240,7 @@ class CustomerDetailsActivity : BaseActivity() {
     private fun bindCustomerData() {
         val c = currentCustomer ?: return
         tvName.text = c.name
-        tvSeries.text = "ID: ${c.id}"
+        tvSeries.text = getString(R.string.customer_id_format, c.id)
         tvAvatarInitial.text = c.name.firstOrNull()?.toString()?.uppercase() ?: "?"
         
         chipStatus.text = c.connectionStatus.uppercase()
@@ -285,7 +279,8 @@ class CustomerDetailsActivity : BaseActivity() {
     private fun syncAmountPaidToTotal() {
         val c = currentCustomer ?: return
         val extra = etManualAmount.text.toString().toDoubleOrNull() ?: 0.0
-        val total = c.baseAmount + c.pendingAmount + extra
+        // DC Rule: pendingAmount is already the full outstanding bill — don't re-add baseAmount.
+        val total = c.pendingAmount + extra
         val text = if (total == total.toLong().toDouble()) total.toLong().toString() else total.toString()
         etAmountPaid.setText(text)
         etAmountPaid.setSelection(text.length)
@@ -296,7 +291,8 @@ class CustomerDetailsActivity : BaseActivity() {
         val extra = etManualAmount.text.toString().toDoubleOrNull() ?: 0.0
         val paid = etAmountPaid.text.toString().toDoubleOrNull() ?: 0.0
 
-        val total = c.baseAmount + c.pendingAmount + extra
+        // DC Rule: pendingAmount is already the full outstanding bill — don't re-add baseAmount.
+        val total = c.pendingAmount + extra
         val balance = total - paid
 
         tvExtraChargesDisplay.text = "₹${"%.2f".format(extra)}"
@@ -311,7 +307,7 @@ class CustomerDetailsActivity : BaseActivity() {
                 rowRemaining.visibility = View.GONE
                 rowChange.visibility = View.GONE
                 rowPaidFully.visibility = View.VISIBLE
-                tvPaidFullyAmount.text = "PAID"
+                tvPaidFullyAmount.text = getString(R.string.paid_caps)
             }
             balance < 0 -> {
                 rowRemaining.visibility = View.GONE
@@ -332,7 +328,7 @@ class CustomerDetailsActivity : BaseActivity() {
         val c = currentCustomer ?: return
         val paid = etAmountPaid.text.toString().toDoubleOrNull() ?: 0.0
         if (paid <= 0) {
-            Toast.makeText(this, "Enter valid amount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.enter_valid_amount), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -343,11 +339,11 @@ class CustomerDetailsActivity : BaseActivity() {
             paymentMode = spPaymentMode.text.toString(),
             paymentNumber = etPaymentNumber.text.toString(),
             onSuccess = {
-                Toast.makeText(this, "Payment Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.payment_successful), Toast.LENGTH_SHORT).show()
                 finish()
             },
             onFailure = { e ->
-                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_prefix, e.message), Toast.LENGTH_SHORT).show()
                 btnSubmit.isEnabled = true
             }
         )
@@ -369,31 +365,48 @@ class CustomerDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun showCreateComplaintDialog(customer: CustomerModel) {
-        val dialog = BottomSheetDialog(this)
-        val view = layoutInflater.inflate(R.layout.bottom_sheet_create_complaint, null)
-        dialog.setContentView(view)
-
-        val etDesc = view.findViewById<EditText>(R.id.etDescription)
-        val btnAdd = view.findViewById<Button>(R.id.btnSubmitComplaint)
-
-        btnAdd.setOnClickListener {
-            val desc = etDesc.text.toString().trim()
-            if (desc.isEmpty()) return@setOnClickListener
-
-            val complaint = ComplaintModel(
-                id = db.collection("complaints").document().id,
-                customerId = customer.id,
-                customerName = customer.name,
-                description = desc
+    /**
+     * On API 35+ the platform enforces edge-to-edge and ignores
+     * windowSoftInputMode="adjustResize", so the keyboard would otherwise
+     * draw over the bottom of the scroll content instead of shrinking it.
+     * Reserve the IME's height as scroll-view padding so there's always
+     * room to scroll a focused field above the keyboard, and nudge the
+     * currently focused field into view once the keyboard finishes opening.
+     */
+    private fun applyImeInsetPadding() {
+        val rootView = findViewById<View>(android.R.id.content)
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
+            val imeBottom = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars()).bottom
+            scrollView.setPadding(
+                scrollView.paddingLeft, scrollView.paddingTop, scrollView.paddingRight,
+                maxOf(imeBottom, navBottom)
             )
-
-            db.collection("complaints").document(complaint.id).set(complaint)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Complaint Raised", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
+            if (imeBottom > 0) {
+                currentFocus?.let { focused -> scrollView.post { scrollToView(focused) } }
+            }
+            insets
         }
-        dialog.show()
+
+        val scrollToFocusListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                scrollView.post { scrollToView(view) }
+            }
+        }
+        etAmountPaid.onFocusChangeListener = scrollToFocusListener
+        etManualAmount.onFocusChangeListener = scrollToFocusListener
+        etPaymentNumber.onFocusChangeListener = scrollToFocusListener
     }
+
+    /** Scrolls [scrollView] so [view] sits just below its toolbar, walking up the view tree to find its true offset. */
+    private fun scrollToView(view: View) {
+        var offset = 0
+        var current = view
+        while (current !== scrollView && current.parent is View) {
+            offset += current.top
+            current = current.parent as View
+        }
+        scrollView.smoothScrollTo(0, (offset - 24).coerceAtLeast(0))
+    }
+
 }
